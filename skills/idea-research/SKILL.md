@@ -1,6 +1,6 @@
 ---
 name: idea-research
-description: 'Adversarial multi-agent research system that pressure-tests a startup idea for the Indian market. Builds its own specialist agent roster for the domain, runs researcher-versus-challenger pairs that write evidence to disk, and returns a BUILD / RESHAPE / KILL decision memo. Use when someone wants an idea validated, a market or competitor scan, gap and threat analysis, community and investor sentiment, or a go/no-go on a venture bet.'
+description: 'Checks whether a startup idea is worth building, using research agents that argue against each other and write everything to files. India-first, written for a founder with no money. Returns a plain-English answer, not a report. Use when someone wants an idea checked, a market or competitor scan, a look at gaps and threats, community and investor sentiment, or a go/no-go on a new bet.'
 license: MIT
 metadata:
   tags: "Startup Research, Market Analysis, Multi-Agent, India, Idea Validation"
@@ -9,318 +9,319 @@ metadata:
 
 # Idea Research
 
-Pressure-test a startup idea by making agents argue with each other **on paper**, not in context.
+Check whether an idea is worth building by making research agents argue with each other in files, then answer the founder in plain English.
 
-- Default market: **India**. Amounts in ₹. Indian sources preferred.
-- Default reader: a founder with **no money, no team, no network**.
-- Default posture: the system tries to **kill** the idea. Survival is the signal.
+- Market: India by default. Money in ₹.
+- Reader: a founder with no money, no team, no network.
+- Job: try to kill the idea. If it survives, that means something.
 
 ## When to use
 
-| Use it for | Do not use it for |
+| Use it for | Don't use it for |
 |---|---|
-| "Validate this idea" | Writing a pitch deck |
+| "Is this idea worth building" | Writing a pitch deck |
 | "Should I build X" | Building a financial model |
-| "Is there a gap in Y market" | Diligence on a company that already exists |
-| "Would anyone fund this in India" | Generic market-size lookups |
-| "Who else is doing this and why haven't they won" | Copywriting or naming |
-
-## Non-negotiables
-
-Breaking any one of these is what makes multi-agent research hallucinate and drift. They hold for every run.
-
-1. **Agents write files. The orchestrator reads summaries.** Never pull a full research payload back into the main thread. A subagent returns at most 5 lines: file path, strongest finding, weakest claim, claim counts, verdict.
-2. **Every factual claim carries a tag.**
-   - `[HIGH|url1, url2]` — two or more independent sources
-   - `[MED|url]` — one source
-   - `[LOW]` — inference from other findings, no direct source
-   - `[ASSUMPTION]` — the agent made it up to keep moving
-3. **Scope is a contract.** Every agent reads the scope block first and works only inside it. Anything interesting but outside goes in a `DRIFT_REQUEST` line — never into the findings.
-4. **Budgets are hard.** An agent that hits its search or word cap stops and reports what it has. Partial and honest beats complete and invented.
-5. **One rebuttal round per lane.** A lane resolves after at most one researcher counter-attack. No second challenge, ever. This is the loop breaker.
-6. **Founder lens on every lane.** Each lane file ends with `SO WHAT FOR A ₹0 FOUNDER` in one or two lines. A finding with no founder consequence gets cut.
-7. **Invented numbers are tagged, not hidden.** A market size with no source is `[ASSUMPTION]`, and the CFO challenger will kill it. That is the system working, not failing.
-
-## Modes
-
-| Mode | Lanes | Agents | Wall time | Use for |
-|---|---|---|---|---|
-| `lite` | 3 — Demand Signal, Competitors, Wedge | ~7 | 8-12 min | Triage. Killing weak ideas cheaply. |
-| `full` | 5 core + 0-3 adaptive | 12-18 | 25-40 min | An idea that survived lite, or one the founder is serious about. |
-
-Default to `full`. Use `lite` when the user says quick, triage, lite, or is comparing several ideas in one go.
+| "Is there a gap in this market" | Research on a company that already exists |
+| "Would anyone fund this in India" | Looking up a market size |
 
 ---
 
-# Phase 0 — SCOPE
+# HOW TO WRITE (read this before anything else)
 
-**Orchestrator only. No subagents. This phase is where drift is prevented, so do not rush it.**
+Most of what goes wrong with this skill is the writing, not the research. The founder is reading on a phone, at night, tired. Write like a smart friend explaining something over chai, not like a consultant billing by the word.
 
-## 0.1 Clarify only if you must
+## Banned outright
 
-Ask **at most 3** questions, and only when the idea cannot be scoped without them. Typical gaps: who the user is, whether it is B2B or B2C, and whether the founder has an unfair advantage here. If the idea is scopeable, skip straight to 0.2.
+| Never write | Write instead |
+|---|---|
+| artefact, offering, solution, proposition | the thing, the PDF, the report, the app |
+| keepable, actionable, learnings, surface | Say what it actually is |
+| load-bearing, resolves to, converts into | rests on, is really, becomes |
+| leverage (as a verb), unlock, enable | use, let, allow |
+| "Buy the traffic" | "Run Meta ads, ₹12,000" |
+| "VERDICT: KILL" | "Should you build this? No." |
+| "The killer assumption" | "What has to be true" |
+| "Three lanes resolved DEAD" | "Three of the seven checks failed" |
 
-## 0.2 Write the scope contract
+**Never use the system's internal words in what the founder reads.** No lane, no verdict, no SURVIVES/WOUNDED/DEAD, no kill criteria, no confidence tags, no ASSUMPTION, no down-weighting. Those are scaffolding. The founder sees the building, not the scaffolding.
 
-Create the run folder `runs/<idea-slug>/` and write `00_scope.md`:
+## Sentence rules
+
+1. **Say the action, not a saying about the action.** "Run Meta ads targeting women 22-38 for ₹12,000" — not "buy the traffic, because there is no network to borrow."
+2. **No aphorisms.** If a sentence sounds like it belongs on a poster, delete it. A line that states a fact then restates it as wisdom is one line too long.
+3. **Three sentences maximum per paragraph.** Longer means it should be a list or a table.
+4. **Name real things.** Real company names, real prices in ₹, real websites, real tools. "A funded competitor" is useless; "Pinky Promise, ₹99 a consult, 400,000 users" is the finding.
+5. **No em-dash stacking.** One per paragraph at most.
+6. **Numbers beat adjectives.** Not "expensive" — "₹40,000 a month."
+7. **If you are guessing, say "we're guessing."** In those words.
+
+## Table rules
+
+Tables are for comparing things, not for hiding prose in a grid.
+
+- Every cell: 15 words maximum. Preferably 5.
+- No cell may contain a hedge on its own ("Partly.", "It depends.")
+- Column headers are short and concrete: "Company", "Price", "Users", "What it means" — never "Why that reason is beatable now"
+- If a column would be full of paragraphs, it is not a column. Make it a list below the table.
+
+## The read-aloud test
+
+Before writing any section, read the previous one aloud in your head. If you sound like a McKinsey deck or a LinkedIn post, rewrite it. If you sound like a person telling a friend what they found, ship it.
+
+---
+
+# THE PIPELINE
+
+Five stages. Stage 1 often ends the run cheaply, which is the point.
+
+| Stage | Agents | Time | What happens |
+|---|---|---|---|
+| 0 Scope | 0 | 2 min | Orchestrator writes the brief, picks the roster |
+| 1 Scout | 1 | 4 min | One agent checks: does this already exist, and does anyone pay for it |
+| 2 Research | 3-6 | 10 min | Parallel researchers, one file each |
+| 3 Attack | 1-2 | 5 min | One agent attacks everything at once |
+| 4 Answer | 1 | 4 min | One agent writes the founder-facing answer |
+
+Total: 6-10 agents, 20-25 minutes. Never more than 12 agents.
+
+---
+
+## Stage 0 — Scope
+
+Orchestrator only. No agents yet.
+
+Ask **at most 3** questions, only if the idea can't be scoped without them. Then write `runs/<slug>/00_brief.md`:
 
 ```markdown
-# Scope contract — <idea>
+# Brief — <idea>
 
-- ONE LINER: <what it is, in a sentence a stranger understands>
-- WHO HURTS: <the specific person, not a segment>
-- WHAT THEY DO TODAY: <the status quo it replaces, including "nothing">
-- WHAT THEY PAY TODAY: <₹ or time, for the status quo>
-- GEOGRAPHY: <India / metro / tier-2-3 / specific state>
-- CATEGORY: <the shelf it sits on>
-- DOMAIN ARCHETYPE: <see roster table below>
-- FOUNDER POSITION: <what they already have — skills, access, capital, none>
-- OUT OF SCOPE: <3-5 things nobody should research>
-- KILL CRITERIA: <2-3 findings that would end this outright>
+- WHAT IT IS: one sentence a stranger understands
+- WHO HAS THE PROBLEM: a specific person, not a segment
+- WHAT THEY DO NOW: including "nothing"
+- WHAT THEY PAY NOW: ₹, and how often
+- WHERE: India / specific cities / tier
+- WHAT THE FOUNDER HAS: skills, access, money, or none
+- NOT RESEARCHING: 3-5 things nobody should chase
+- WHAT WOULD KILL THIS: 2-3 findings that end it
 ```
 
-`KILL CRITERIA` matters most. Writing down what would end the idea *before* researching it is what stops the system from rationalising a yes.
-
-## 0.3 Build the roster
-
-Every run gets these **5 core lanes** (3 in lite mode — marked ★):
-
-| ID | Lane | Researcher persona | Must answer | Challenger persona |
-|---|---|---|---|---|
-| L1 | Market & Money | Bootstrapped India operator | Who pays, how much, how often, in ₹. Realistic reachable market, not TAM theatre. | **The CFO** — has seen 100 decks, kills fantasy arithmetic |
-| L2 ★ | Competitors & Incumbents | Category historian | Who tried, who is funded, who died and why. Why has the obvious player not shipped this. Adjacent industries that could enter. | **Incumbent's Head of Product** — "we ship this in a quarter and crush you" |
-| L3 ★ | Demand Signal | Community lurker | Reddit, Quora, YouTube comments, X, niche forums, plus news for directional movement. Real complaints in real words. | **The Churned User** — tried something like this, stopped paying, explains why |
-| L4 ★ | Wedge & Distribution | Zero-budget growth operator | First 100 users with ₹0. WhatsApp, regional language, tier-2/3, offline, community-led. | **Growth Lead with no budget** — "your CAC is unpayable" |
-| L5 | Capital & Survival | India seed scout | Would anyone fund this. Comparable Indian deals. Or is it bootstrap-only, and is that acceptable. | **Seed Partner who passes on 99%** — writes the actual pass email |
-
-Then add **0-3 adaptive lanes** by matching the domain archetype:
-
-| Domain archetype | Adaptive researcher | Its challenger |
-|---|---|---|
-| Pharma, health, medtech | Regulatory analyst (CDSCO, NMC, ABDM, clinical claims) | Hospital compliance head |
-| Fintech, lending, insurance | Regulatory analyst (RBI, IRDAI, SEBI, DPDP) | Risk & compliance officer |
-| Manufacturing, hardware, D2C physical | Supply chain & import-export analyst (BIS, customs, landed cost) | Freight and customs veteran |
-| Sports, fitness | The practitioner — athlete or coach | Practitioner who has watched 10 apps come and go |
-| Education | The practitioner — teacher or parent paying fees | School procurement decision maker |
-| Agri, rural | The practitioner — farmer or FPO operator | Rural distribution veteran |
-| B2B, enterprise SaaS | Channel partner and systems integrator | Enterprise procurement head |
-| Consumer social, creator | Community moderator or creator | Platform policy and dependency risk analyst |
-| Logistics, mobility | Fleet and last-mile operator | Unit-economics operator from a delivery company |
-| Nothing fits | **Invent one.** Name the role a real insider would hold, write its one-line brief, and pair it with the skeptic who would most want it to fail. | |
-
-Cap at 3 adaptive lanes. If more than 3 seem necessary, the scope is too wide — narrow the scope instead.
-
-## 0.4 Show the roster and get a go-ahead
-
-Write `01_roster.md`, then show the user a compact table: lane, persona, challenger, why this lane was added. Ask for a one-line go-ahead. Do not spend agents before that.
+Write "what would kill this" **before** any research. It is what stops the system talking itself into a yes.
 
 ---
 
-# Phase 1 — GROUND
+## Stage 1 — Scout (one agent, always, before anything else)
 
-Spawn **every researcher in a single message** so they run in parallel. Each gets this prompt, filled in:
+This stage exists because the last version of this skill burned 14 agents re-discovering something one agent found in five minutes.
+
+One agent, 10 searches, 400 words. It answers only:
+
+1. Does this product already exist in India? Name it, its price, its size, its funding.
+2. Does anyone in this market pay for the exact thing being sold here, or do they pay for something adjacent (a product, a person's time)?
+3. What did the closest existing player choose to do that looks expensive or awkward? That choice is usually them hitting a wall the founder hasn't hit yet.
+
+It writes `01_scout.md` and returns 5 lines.
+
+**Then the orchestrator branches:**
+
+| What Scout found | What to run |
+|---|---|
+| A direct competitor doing the same thing, funded, at scale | **Teardown mode**: 3 researchers only — what the competitor can't or won't do, whether the money is real, what it costs to enter. Skip the rest. |
+| Nobody pays for the core thing anywhere in this market | **Money-first mode**: 3 researchers only — is there any proof of payment, what do people pay for instead, what would have to change. Skip the rest. |
+| Genuinely open field | **Full mode**: 5-6 researchers as below. |
+
+Say which mode was picked and why, in one line, before spending more agents.
+
+---
+
+## Stage 2 — Research
+
+Spawn all researchers in one message. Each writes one file and returns 5 lines.
+
+### Core researchers
+
+| ID | Who they are | What they find out |
+|---|---|---|
+| R1 | Someone who has sold to Indian consumers with no money | Who pays, how much, how often, which sub-group pays best. Real ₹, real sources. |
+| R2 | Someone who knows which companies in this space died and why | Who is doing it now, who tried and failed, what killed them, who could enter tomorrow |
+| R3 | Someone who reads the forums | Where these people complain, in their own words. Whether anyone is already hacking a workaround. |
+| R4 | Someone who has grown a product on ₹0 | The first 100 users, named. How to reach them free. What blocks trust. |
+| R5 | Someone who tracks Indian seed deals | Who funds this, what makes them pass, whether it works without funding |
+
+### Specialist researchers (add 0-2, based on the domain)
+
+| Domain | Add this specialist |
+|---|---|
+| Health, pharma, medtech | Someone who reads the actual regulation (NMC, CDSCO, ABDM) and prices what compliance costs |
+| Fintech, lending, insurance | Someone who reads RBI, IRDAI, SEBI, DPDP rules and prices compliance |
+| Manufacturing, hardware, D2C | Someone who knows customs, BIS and landed cost |
+| Sports, education, agri | The person doing the job today — the coach, the teacher, the farmer |
+| B2B, enterprise | The channel partner and the procurement head who signs |
+| Consumer social, creator | A community moderator who knows platform risk |
+| Nothing fits | Invent one. Name a real job title and what that person would know. |
+
+Cap at 2 specialists. Needing more means the idea is scoped too wide.
+
+### What each researcher gets
 
 ```
-You are {PERSONA}: {PERSONA_ONE_LINER}.
+You are {WHO}: {ONE LINE ON WHY THEY KNOW THIS}.
 
-SCOPE CONTRACT — do not research outside this:
-{paste 00_scope.md verbatim}
+FIRST ACTION: read runs/<slug>/00_brief.md and 01_scout.md. Work only inside the brief.
 
-YOUR LANE: {LANE_NAME}
-Answer these, in order:
-{LANE_QUESTIONS}
+ALREADY KNOWN — do not re-research, build on it:
+{3-5 bullet findings from Scout and any earlier wave}
+
+YOUR JOB: {4-5 specific questions}
 
 RULES
-- Budget: max {SEARCHES} web searches, max {WORDS} words written. Stop at the cap and report what you have.
-- Tag every factual claim: [HIGH|url,url] [MED|url] [LOW] [ASSUMPTION].
-- Indian sources and Indian pricing first. Amounts in ₹.
-- You must report disconfirming evidence. A lane with no counter-evidence is a lane that did not look.
-- Interesting but out of scope goes under DRIFT_REQUEST. Do not chase it.
-- Do not recommend anything. You gather; someone else decides.
+- Max {N} searches, max 700 words. Stop at the cap.
+- Every fact gets a source URL. If you have no source, write "no source — this is a guess."
+- Indian sources, Indian prices, ₹.
+- Report what argues AGAINST the idea. If you found none, you did not look.
+- Off-topic goes in NOT MY JOB at the bottom. Don't chase it.
+- Don't recommend anything. Find things out.
+- Write plainly. No jargon, no aphorisms, three sentences per paragraph.
 
-WRITE to {PATH} with exactly these sections:
-# {LANE_NAME}
-## FINDINGS
-## EVIDENCE TABLE      (claim | tag | source | why it matters)
-## DISCONFIRMING EVIDENCE
-## OPEN QUESTIONS
-## SO WHAT FOR A ₹0 FOUNDER
-## DRIFT_REQUEST
+WRITE to {PATH}:
+# {NAME}
+## WHAT I FOUND        (bullets, most important first)
+## THE NUMBERS         (table: what | how much | source)
+## WHAT ARGUES AGAINST IT
+## WHAT I COULDN'T FIND OUT
+## WHAT THIS MEANS FOR A FOUNDER WITH NO MONEY
+## NOT MY JOB
 
-RETURN to the orchestrator ONLY: file path, strongest finding (1 line), weakest load-bearing claim (1 line), claim counts by tag. Max 5 lines.
+RETURN only: file path, biggest finding (1 line), shakiest thing you relied on (1 line), how many facts had sources vs were guesses. Max 5 lines.
 ```
 
-Budgets:
+Budgets: 12 searches and 700 words in full mode, 8 and 500 in teardown or money-first mode.
 
-| Mode | Searches per researcher | Words per lane file |
-|---|---|---|
-| `lite` | 6-8 | 500 |
-| `full` | 12-18 | 900 |
-
-## Lane questions
-
-**L1 Market & Money**
-- Who writes the cheque, and is that the same person who feels the pain?
-- What do they pay today for the status quo, in ₹, and how often?
-- What is the realistically reachable set of buyers in year one — a number you can defend, not a TAM slide?
-- What does the same job cost in a market where it is already solved, and does that price survive Indian willingness to pay?
-- What breaks the unit economics: payment collection, support cost, churn, GST, returns?
-
-**L2 Competitors & Incumbents**
-- Who is doing this in India now — funded, bootstrapped, or as a side feature?
-- Who tried and died, and what actually killed them?
-- Why has the obvious incumbent not shipped this? Distinguish *cannot* from *will not* — "will not" is a real opening, "cannot" is usually temporary.
-- Which adjacent industry could enter this and win on distribution alone?
-- Which global player is one India-launch away from owning this?
-
-**L3 Demand Signal**
-- Where do these people complain in public? Name the specific subreddits, Quora topics, YouTube channels, forums, communities.
-- Quote the actual language they use for the pain. Their words, not yours.
-- Is anyone hacking together a workaround today? A workaround is stronger evidence than a wishlist.
-- What is the directional movement in news over the last 18 months — into this space or out of it?
-- Where is the silence? A category with no complaints often has no demand.
-
-**L4 Wedge & Distribution**
-- Name the first 100 users specifically enough to list them.
-- Reach them with ₹0: which community, which WhatsApp group, which offline gathering, which existing audience?
-- What is the one narrow use case that gets a yes fastest, even if it is a fraction of the vision?
-- What is the trust barrier in India for this, and who lends credibility cheaply?
-- Language, device and payment reality: does this work on a ₹8,000 Android on patchy data, in the buyer's language, paid by UPI?
-
-**L5 Capital & Survival**
-- Which Indian funds have written cheques in or next to this category in the last 8 quarters? Name them and the deals.
-- What do those deals suggest about what a fundable version of this looks like?
-- What would make an investor pass in 30 seconds?
-- Is a bootstrapped version viable, and what does it need to reach ₹1 lakh a month?
-- Does this need capital to work at all, or only to grow faster?
-
-**Adaptive lanes** — write 4-5 questions in the same shape: specific, answerable, India-anchored, and ending in a founder consequence.
+**Duplicate rule:** each researcher appends its headline findings to `_findings.md`. Before writing, a researcher reads that file. If its main finding is already there, it says "already known" and spends its remaining budget on something not yet covered. This is what stops six agents reaching one conclusion.
 
 ---
 
-# Phase 2 — CHALLENGE
+## Stage 3 — Attack
 
-Spawn **every challenger in a single message**. Each reads only its own lane file.
-
-```
-You are {CHALLENGER}: {CHALLENGER_ONE_LINER}.
-Your job is to kill this lane, not to be fair to it.
-
-READ ONLY: {PATH}
-Run new searches only to land a specific attack. Max {C} searches ({C} = 3 full, 2 lite).
-
-ATTACK IN THIS ORDER
-1. Every [LOW] and [ASSUMPTION] claim the conclusion rests on. If the argument dies without it, say so plainly.
-2. The Indian-market reality the lane ignored: price sensitivity, cash flow timing, tier-2/3 behaviour, regulation, language, trust, cost to serve.
-3. The strongest version of the counter-case. Steelman why this fails.
-4. What a well-resourced incumbent does the day this starts working.
-
-APPEND to the same file:
-## CHALLENGE — {CHALLENGER}
-### Fatal      (kills the lane)
-### Serious    (needs an answer before proceeding)
-### Noted      (survivable, logged)
-### VERDICT: SURVIVES | WOUNDED | DEAD
-### The one question that would save this lane:
-
-RETURN only: verdict, and the one question. Max 3 lines.
-```
-
-## Rebuttal — once, then stop
-
-For each lane returning `WOUNDED` or `DEAD`, spawn **one** researcher with the challenger's single question and a budget of 5 searches. It appends:
+**One agent, not one per researcher.** The old version ran seven attackers who all said the same thing.
 
 ```
-## REBUTTAL
-## RESOLVED VERDICT: SURVIVES | WOUNDED | DEAD
+You are the sharpest sceptic this idea will ever meet. Your job is to kill it.
+
+READ every file in lanes/ and the brief. Max 5 new searches, only to land a specific hit.
+
+For EACH research file, find:
+1. The claim the conclusion depends on that has no source behind it. If the argument dies without it, say so.
+2. The Indian reality it ignored: price sensitivity, who controls the money in the household, trust, language, regulation, cost to serve.
+3. The best argument that this fails.
+
+Then, across all of them:
+4. What a big company does the day this starts working.
+5. Which of these files are all saying the same thing? Name the duplication.
+
+WRITE runs/<slug>/02_attack.md:
+## WHAT KILLS IT          (ranked, worst first)
+## WHAT NEEDS AN ANSWER   (ranked)
+## SURVIVES THE ATTACK    (what held up)
+## WHAT ONE FACT WOULD CHANGE THE ANSWER
+
+Plain English. No scoring, no verdict labels, no jargon.
 ```
 
-Then the lane is closed. No second challenge round under any circumstance. If a lane is still DEAD, that is a finding, not a failure.
+**Then one round of checking back, and only where research can settle it.** If the attack turns on a fact that can be looked up — a rule, a policy, a price, a disclosed number — send one agent with 5 searches to check it. If it turns on something only a live test can answer, don't send an agent. Write it down as a thing to test and move on. Never more than 2 check-back agents.
 
 ---
 
-# Phase 3 — ASSESS
+## Stage 4 — The answer
 
-**One agent.** It reads the lane files and the scope contract. It does no research of its own.
+One agent. It reads the research files and the attack. It does no research.
+
+This is the only thing the founder reads carefully. It follows the writing rules at the top of this file, strictly.
 
 ```
-You are the Assessor. You did not do this research and you will not do any now.
+You are writing the answer for a founder with no money, reading on their phone, tired.
 
-READ: 00_scope.md and every file in lanes/.
+READ: 00_brief.md, 01_scout.md, everything in lanes/, 02_attack.md.
 
-WRITE 99_verdict.md:
+WRITE runs/<slug>/ANSWER.md in this exact structure:
 
-## VERDICT: BUILD | RESHAPE | KILL
-Two lines of why. Nothing hedged.
+# <Idea> — should you build it?
 
-## THE THREE REAL GAPS
-Table: gap | why it is still open | why that reason is beatable now
-A gap with no explanation of why nobody has filled it is not a finding — it is a hole in the research. Say so if that is the case.
+## The answer
+"Yes" / "No" / "Not this version, but here's the one that might work".
+Then 3 bullets on why. Each bullet: one fact, one sentence.
 
-## THREE THREATS AS LEVERAGE
-Table: threat | how it converts into an advantage | what flipping it costs
+## Who's already doing this
+Table: Company | What they do | Price | How big | What it tells you
+If nobody is, say so and say what that probably means.
 
-## THE KILLER ASSUMPTION
-The single belief that, if wrong, ends this. One line.
+## Would people actually pay
+- What people in this market pay for today, with real ₹ figures
+- What they have never been shown to pay for
+- One line on which group would pay most, and why
 
-## THE ₹20K TEST
-A two-week experiment that falsifies the killer assumption. Numbered steps, each with cost in ₹ and time. Total under ₹20,000.
+## What has to be true
+One sentence. The single belief the whole idea rests on.
 
-## MONDAY MORNING
-One action, doable in under 2 hours, starting today.
+## How to find out
+A test costing under ₹20,000 and taking under two weeks.
+Numbered steps. Each step: what to do, what it costs, how long.
+Last step: the number that means yes and the number that means no.
 
-## WHAT WE STILL DO NOT KNOW
-Ranked, each with the cheapest way to find out.
+## Do this first
+One thing, doable today, under two hours. Say exactly what to open and what to do.
+
+## What we couldn't find out
+Table: Question | Why it matters | Cheapest way to answer it
+Include anything the research was blocked from reaching.
 
 RULES
-- Down-weight every conclusion resting on [LOW] or [ASSUMPTION] claims, and name them.
-- If 3 or more lanes resolved DEAD, the verdict is KILL. Do not soften it.
-- Recommend nothing that needs money, headcount or a network the founder does not have.
-- No summary of the research. The lane files already exist. Decide.
+- No jargon. No words from the list of banned words. No aphorisms.
+- Three sentences per paragraph, maximum.
+- Table cells: 15 words maximum.
+- Real names, real prices, real websites.
+- If a finding rests on a guess, write "we're guessing here" in plain words.
+- If most of the research failed, say "don't build this" plainly. Don't soften it, don't dress it up.
+- If there is a smaller version worth testing, describe it in five plain sentences. Don't oversell it.
+- No summary of the research. The files exist. Answer the question.
 ```
 
-## Deliver
+## Delivering it
 
-Show the user `99_verdict.md` in full, then a one-line index of the lane files. Do not restate the research in chat.
+Show the founder the answer file. Then one line naming where the detailed files are. Do not re-explain the research in chat.
 
 ---
 
-# Run state
-
-Maintain `_state.md` in the run folder so a crashed or resumed run picks up cleanly:
-
-| Lane | Researcher | Challenger | Rebuttal | Verdict |
-|---|---|---|---|---|
-| L1 | done | done | n/a | SURVIVES |
-| L2 | done | done | done | WOUNDED |
-
-Update it after each phase. It is the only state the orchestrator needs to hold.
-
-# File layout
+# Files
 
 ```
-runs/<idea-slug>/
-├── 00_scope.md          scope contract, read by every agent
-├── 01_roster.md         which lanes ran and why
-├── _state.md            phase and lane status
-├── lanes/
-│   ├── L1_market.md     findings + CHALLENGE + REBUTTAL + verdict, one file
-│   ├── L2_competitors.md
-│   ├── L3_demand.md
-│   ├── L4_wedge.md
-│   ├── L5_capital.md
-│   └── A1_<adaptive>.md
-└── 99_verdict.md        the decision memo
+runs/<slug>/
+├── 00_brief.md        the brief, read by every agent
+├── 01_scout.md        does this exist, does anyone pay
+├── _findings.md       running list, stops duplicate work
+├── _state.md          what has run
+├── lanes/             one file per researcher
+├── 02_attack.md       everything the sceptic found
+└── ANSWER.md          what the founder reads
 ```
 
-One lane, one file, start to finish. The argument and its resolution live together, so nothing has to be reassembled later.
+# Keeping it fast
 
-# Failure modes and what to do
+| Rule | Why |
+|---|---|
+| Scout runs first, alone | One agent often ends the run in 5 minutes |
+| Mode is picked after Scout | Stops a 7-lane run on a question already answered |
+| One attacker, not one per researcher | Seven attackers produced one conclusion last time |
+| Check back only on lookup-able facts | "Needs a live test" doesn't need an agent to say it |
+| `_findings.md` before writing | Stops researchers re-deriving each other |
+| Never more than 12 agents | If it needs more, the idea is scoped too wide |
 
-| Symptom | Cause | Fix |
+# When it goes wrong
+
+| What you see | Why | Fix |
 |---|---|---|
-| Lanes all say the same thing | Scope too broad | Rewrite `00_scope.md` narrower, rerun |
-| Every lane SURVIVES | Challengers were too polite | Rerun Phase 2 with the instruction "you are being graded on kills" |
-| Verdict reads generic | Assessor got raw research instead of lane files | It must read `lanes/` only |
-| Agent went off-topic | Scope contract not pasted into its prompt | Paste it verbatim, every time |
-| Run stalls midway | Too many agents at once | Cap parallel spawns at 6, run in two waves |
+| Everything says the same thing | Idea scoped too broadly | Narrow the brief, rerun |
+| The answer sounds like a consultant | Writing rules ignored | Rewrite Stage 4 only, point at the banned list |
+| Nothing was found to argue against it | Attacker was too polite | Rerun Stage 3, tell it it is being judged on kills |
+| The run took 30+ minutes | Scout branch was skipped | Always run Scout first |
+| Answer is vague | Stage 4 read raw research | It must read the research files and attack file only |
+| No Indian sources | Brief didn't name a place | Put the city or state in the brief |
