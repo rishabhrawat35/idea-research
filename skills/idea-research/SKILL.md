@@ -1,6 +1,6 @@
 ---
 name: idea-research
-description: 'Checks whether a startup idea is worth building, using research agents that argue against each other and write everything to files. India-first, written for a founder with no money. Returns a plain-English answer, not a report. Use when someone wants an idea checked, a market or competitor scan, a look at gaps and threats, community and investor sentiment, or a go/no-go on a new bet.'
+description: 'Checks whether a startup idea is worth building. Research agents dig, one sceptic tries to kill it, one builder tries to find the way in, and the answer says which. Asks what changed recently that makes this newly possible, so genuinely new ideas are not rejected for having no track record. India-first, plain English. Use when someone wants an idea checked, a market or competitor scan, gaps and threats, community or investor sentiment, or a go/no-go on a new bet.'
 license: MIT
 metadata:
   tags: "Startup Research, Market Analysis, Multi-Agent, India, Idea Validation"
@@ -9,11 +9,11 @@ metadata:
 
 # Idea Research
 
-Check whether an idea is worth building by making research agents argue with each other in files, then answer the founder in plain English.
+Check whether an idea is worth building. One set of agents digs, one tries to kill it, one tries to find the way in, and the answer tells the founder which won.
 
 - Market: India by default. Money in ₹.
 - Reader: a founder with no money, no team, no network.
-- Job: try to kill the idea. If it survives, that means something.
+- Job: find the truth, not a verdict. A "no" with no way in is only half a job done.
 
 ## When to use
 
@@ -24,11 +24,18 @@ Check whether an idea is worth building by making research agents argue with eac
 | "Is there a gap in this market" | Research on a company that already exists |
 | "Would anyone fund this in India" | Looking up a market size |
 
+## The two mistakes this system must not make
+
+1. **Saying yes to a corpse.** Most ideas that nobody pays for are ideas people have already refused. Softening that helps nobody.
+2. **Saying no to something new.** Nobody paid to summon a car from a phone before GPS phones existed. Nobody paid for web search before the web got big. An idea with no track record is not the same as an idea that has been refused.
+
+Telling those apart is the whole job. Everything below exists to do it.
+
 ---
 
 # HOW TO WRITE (read this before anything else)
 
-Most of what goes wrong with this skill is the writing, not the research. The founder is reading on a phone, at night, tired. Write like a smart friend explaining something over chai, not like a consultant billing by the word.
+The founder is reading on a phone, at night, tired. Write like a smart friend explaining something over chai, not like a consultant billing by the word.
 
 ## Banned outright
 
@@ -38,59 +45,73 @@ Most of what goes wrong with this skill is the writing, not the research. The fo
 | keepable, actionable, learnings, surface | Say what it actually is |
 | load-bearing, resolves to, converts into | rests on, is really, becomes |
 | leverage (as a verb), unlock, enable | use, let, allow |
+| ecosystem, landscape, moat, thesis, posture | name the actual thing |
 | "Buy the traffic" | "Run Meta ads, ₹12,000" |
 | "VERDICT: KILL" | "Should you build this? No." |
 | "The killer assumption" | "What has to be true" |
 | "Three lanes resolved DEAD" | "Three of the seven checks failed" |
 
-**Never use the system's internal words in what the founder reads.** No lane, no verdict, no SURVIVES/WOUNDED/DEAD, no kill criteria, no confidence tags, no ASSUMPTION, no down-weighting. Those are scaffolding. The founder sees the building, not the scaffolding.
+**Never use the system's internal words in what the founder reads.** No lane, no verdict, no kill criteria, no confidence tags, no down-weighting. That is scaffolding. The founder sees the building.
 
 ## Sentence rules
 
 1. **Say the action, not a saying about the action.** "Run Meta ads targeting women 22-38 for ₹12,000" — not "buy the traffic, because there is no network to borrow."
-2. **No aphorisms.** If a sentence sounds like it belongs on a poster, delete it. A line that states a fact then restates it as wisdom is one line too long.
+2. **No aphorisms.** If a sentence sounds like it belongs on a poster, delete it. Never state a fact then restate it as wisdom.
 3. **Three sentences maximum per paragraph.** Longer means it should be a list or a table.
-4. **Name real things.** Real company names, real prices in ₹, real websites, real tools. "A funded competitor" is useless; "Pinky Promise, ₹99 a consult, 400,000 users" is the finding.
-5. **No em-dash stacking.** One per paragraph at most.
+4. **Nothing over 25 words in a sentence.**
+5. **Name real things.** Real companies, real prices in ₹, real websites. "A funded competitor" is useless; "Mylo, $24.25M raised, ₹63.4 Cr revenue, ₹19 Cr loss" is the finding.
 6. **Numbers beat adjectives.** Not "expensive" — "₹40,000 a month."
-7. **If you are guessing, say "we're guessing."** In those words.
+7. **If you are guessing, write "we're guessing here."** In those words.
 
 ## Table rules
 
-Tables are for comparing things, not for hiding prose in a grid.
-
 - Every cell: 15 words maximum. Preferably 5.
-- No cell may contain a hedge on its own ("Partly.", "It depends.")
-- Column headers are short and concrete: "Company", "Price", "Users", "What it means" — never "Why that reason is beatable now"
-- If a column would be full of paragraphs, it is not a column. Make it a list below the table.
+- No cell that is only a hedge ("Partly.", "It depends.")
+- Headers are short and concrete: "Company", "Price", "Users", "What it means".
+- If a column would be full of paragraphs, it is not a column. Make it a list below.
 
 ## The read-aloud test
 
-Before writing any section, read the previous one aloud in your head. If you sound like a McKinsey deck or a LinkedIn post, rewrite it. If you sound like a person telling a friend what they found, ship it.
+Read each section back in your head. If it sounds like a McKinsey deck or a LinkedIn post, rewrite it.
+
+---
+
+# NEVER STOP AT A BLOCKED SOURCE
+
+Every researcher follows this. "Reddit was blocked" is not a finding. It is a researcher giving up.
+
+When a site will not load, work down this ladder and say in the file which rungs you tried:
+
+1. **Search for the content instead of the page.** Reddit and Quora threads are quoted all over search results. Try `site:reddit.com <topic>` and the topic plus "reddit" as plain search.
+2. **Go to a different community on the same subject.** Forums, Discord write-ups, Facebook group coverage, niche Indian sites, app store review pages, YouTube comment round-ups, Trustpilot, Play Store reviews.
+3. **Ask the same question about another country.** This is often better evidence than the local answer, and it feeds the "what changed" test below. If couples in Indonesia or Brazil pay for this, the Indian question becomes *when*, not *whether*.
+4. **Look for someone who already did the reading.** Market reports, dissertations, journalism, a Substack, a YC company's blog post.
+5. **Use the browser, if this session has browser tools.** Claude in Chrome (`mcp__claude-in-chrome__*`) or the built-in browser (`mcp__remote-devices__Claude_Browser__*`) can open pages the fetch tool cannot. Ask the orchestrator to run it if a subagent cannot.
+6. **Only then** write "could not find out", and list the five things you tried.
+
+The orchestrator must check this. If a research file says a source was blocked and does not list what was tried instead, send it back once.
 
 ---
 
 # THE PIPELINE
 
-Five stages. Stage 1 often ends the run cheaply, which is the point.
-
 | Stage | Agents | Time | What happens |
 |---|---|---|---|
-| 0 Scope | 0 | 2 min | Orchestrator writes the brief, picks the roster |
-| 1 Scout | 1 | 4 min | One agent checks: does this already exist, and does anyone pay for it |
+| 0 Scope | 0 | 2 min | Write the brief |
+| 1 Scout | 1 | 4 min | Does it exist, does anyone pay, **and what changed recently** |
 | 2 Research | 3-6 | 10 min | Parallel researchers, one file each |
-| 3 Attack | 1-2 | 5 min | One agent attacks everything at once |
-| 4 Answer | 1 | 4 min | One agent writes the founder-facing answer |
+| 3 Attack + Build | 2 | 5 min | One tries to kill it, one tries to find the way in. Same time, same files. |
+| 4 Answer | 1 | 4 min | Reads both sides, writes the answer |
 
-Total: 6-10 agents, 20-25 minutes. Never more than 12 agents.
+Total: 7-11 agents, 20-25 minutes. Never more than 12.
 
 ---
 
 ## Stage 0 — Scope
 
-Orchestrator only. No agents yet.
+Orchestrator only. No agents.
 
-Ask **at most 3** questions, only if the idea can't be scoped without them. Then write `runs/<slug>/00_brief.md`:
+Ask **at most 3** questions, only if the idea cannot be scoped without them. Then write `runs/<slug>/00_brief.md`:
 
 ```markdown
 # Brief — <idea>
@@ -101,35 +122,45 @@ Ask **at most 3** questions, only if the idea can't be scoped without them. Then
 - WHAT THEY PAY NOW: ₹, and how often
 - WHERE: India / specific cities / tier
 - WHAT THE FOUNDER HAS: skills, access, money, or none
+- WHY NOW: what the founder thinks changed that makes this possible today
 - NOT RESEARCHING: 3-5 things nobody should chase
 - WHAT WOULD KILL THIS: 2-3 findings that end it
 ```
 
 Write "what would kill this" **before** any research. It is what stops the system talking itself into a yes.
 
+`WHY NOW` may be blank if the founder has no answer. A blank one is itself a finding, and Scout will try to fill it.
+
 ---
 
-## Stage 1 — Scout (one agent, always, before anything else)
+## Stage 1 — Scout
 
-This stage exists because the last version of this skill burned 14 agents re-discovering something one agent found in five minutes.
+One agent, 12 searches, 500 words. Before anything expensive.
 
-One agent, 10 searches, 400 words. It answers only:
+It answers four things:
 
-1. Does this product already exist in India? Name it, its price, its size, its funding.
-2. Does anyone in this market pay for the exact thing being sold here, or do they pay for something adjacent (a product, a person's time)?
-3. What did the closest existing player choose to do that looks expensive or awkward? That choice is usually them hitting a wall the founder hasn't hit yet.
+1. **Does this exist in India?** Name every real one. Price in ₹, users, money raised, current status.
+2. **Does anyone pay for the exact thing, or only for something next to it** (a product, a person's time)?
+3. **What did the closest company choose to do that looks expensive or awkward?** That choice is usually them hitting a wall.
+4. **What changed?** This is the question that stops good new ideas being rejected. Specifically:
+   - What became possible in the last 24 to 36 months that was not before? Cost falling, a new platform, a rule change, a behaviour shift, infrastructure arriving.
+   - Does this work and make money in another country? Which, at what price, how big?
+   - Are there dead bodies here? If yes, **what killed them, and has that thing since changed?** A company that died of a constraint that no longer exists is evidence *for* the idea, not against it.
 
 It writes `01_scout.md` and returns 5 lines.
 
-**Then the orchestrator branches:**
+### Then the orchestrator branches
 
 | What Scout found | What to run |
 |---|---|
-| A direct competitor doing the same thing, funded, at scale | **Teardown mode**: 3 researchers only — what the competitor can't or won't do, whether the money is real, what it costs to enter. Skip the rest. |
-| Nobody pays for the core thing anywhere in this market | **Money-first mode**: 3 researchers only — is there any proof of payment, what do people pay for instead, what would have to change. Skip the rest. |
-| Genuinely open field | **Full mode**: 5-6 researchers as below. |
+| Direct competitor, funded, at scale, and nothing has changed since | **Teardown**: 3 researchers. What that competitor cannot or will not do, whether the money is real, cost to enter. |
+| Nobody pays for the core thing, and people have already refused it | **Money-first**: 3 researchers. Any proof of payment anywhere, what people pay for instead, what would have to change. |
+| Nobody pays, **but no dead bodies, or the thing that killed them has changed** | **New-thing mode**: 4 researchers. Do not ask "who pays today". Ask what would have to be true, who the earliest adopters are, whether the new behaviour is visible anywhere yet, and what it costs to be first. |
+| Genuinely open field | **Full**: 5-6 researchers. |
 
 Say which mode was picked and why, in one line, before spending more agents.
+
+**New-thing mode matters.** Most systems like this only have the first two rows, which is why they would reject anything genuinely new. If Scout finds that the ground moved recently, "nobody pays today" stops being evidence of anything.
 
 ---
 
@@ -141,44 +172,51 @@ Spawn all researchers in one message. Each writes one file and returns 5 lines.
 
 | ID | Who they are | What they find out |
 |---|---|---|
-| R1 | Someone who has sold to Indian consumers with no money | Who pays, how much, how often, which sub-group pays best. Real ₹, real sources. |
-| R2 | Someone who knows which companies in this space died and why | Who is doing it now, who tried and failed, what killed them, who could enter tomorrow |
-| R3 | Someone who reads the forums | Where these people complain, in their own words. Whether anyone is already hacking a workaround. |
+| R1 | Someone who has sold to Indian consumers with no money | Who pays, how much, how often, which group pays best. Real ₹, real sources. |
+| R2 | Someone who knows which companies here died and why | Who is doing it now, who failed, what killed them, whether that cause still applies, who could enter tomorrow |
+| R3 | Someone who reads the forums | Where these people talk, in their own words. Who is already hacking a workaround. |
 | R4 | Someone who has grown a product on ₹0 | The first 100 users, named. How to reach them free. What blocks trust. |
-| R5 | Someone who tracks Indian seed deals | Who funds this, what makes them pass, whether it works without funding |
+| R5 | Someone who tracks Indian seed deals | Who funds this, what makes them pass, whether it works unfunded |
 
-### Specialist researchers (add 0-2, based on the domain)
+In **new-thing mode**, swap R5 for:
+
+| R6 | Someone who studies how new behaviours start | Where this behaviour is visible in early form. Who is doing it manually today. What it looked like in another country 2-4 years before it became normal. |
+
+### Specialists (add 0-2, by domain)
 
 | Domain | Add this specialist |
 |---|---|
-| Health, pharma, medtech | Someone who reads the actual regulation (NMC, CDSCO, ABDM) and prices what compliance costs |
-| Fintech, lending, insurance | Someone who reads RBI, IRDAI, SEBI, DPDP rules and prices compliance |
-| Manufacturing, hardware, D2C | Someone who knows customs, BIS and landed cost |
+| Health, pharma, medtech | Reads NMC, CDSCO, ABDM rules, prices what compliance costs |
+| Fintech, lending, insurance | Reads RBI, IRDAI, SEBI, DPDP rules, prices compliance |
+| Manufacturing, hardware, D2C | Knows customs, BIS, landed cost, minimum orders |
 | Sports, education, agri | The person doing the job today — the coach, the teacher, the farmer |
-| B2B, enterprise | The channel partner and the procurement head who signs |
+| B2B, enterprise | The channel partner, and the procurement head who signs |
 | Consumer social, creator | A community moderator who knows platform risk |
 | Nothing fits | Invent one. Name a real job title and what that person would know. |
 
-Cap at 2 specialists. Needing more means the idea is scoped too wide.
+Cap at 2. Needing more means the idea is scoped too wide.
 
 ### What each researcher gets
 
 ```
 You are {WHO}: {ONE LINE ON WHY THEY KNOW THIS}.
 
-FIRST ACTION: read runs/<slug>/00_brief.md and 01_scout.md. Work only inside the brief.
+FIRST ACTION: read runs/<slug>/00_brief.md, 01_scout.md and _findings.md. Work only inside the brief.
 
 ALREADY KNOWN — do not re-research, build on it:
-{3-5 bullet findings from Scout and any earlier wave}
+{3-5 bullets from Scout and earlier waves}
 
 YOUR JOB: {4-5 specific questions}
 
 RULES
 - Max {N} searches, max 700 words. Stop at the cap.
-- Every fact gets a source URL. If you have no source, write "no source — this is a guess."
-- Indian sources, Indian prices, ₹.
+- Every fact gets a source URL. No source, write "no source — this is a guess."
+- Indian sources, Indian prices, ₹. Other countries when they answer a question India cannot.
 - Report what argues AGAINST the idea. If you found none, you did not look.
-- Off-topic goes in NOT MY JOB at the bottom. Don't chase it.
+- BLOCKED SOURCES: never stop. Search for the content, try other communities, try another
+  country, try app store reviews, ask the orchestrator to use browser tools. Write down which
+  of these you tried. "It was blocked" on its own is not acceptable.
+- Off-topic goes under NOT MY JOB. Don't chase it.
 - Don't recommend anything. Find things out.
 - Write plainly. No jargon, no aphorisms, three sentences per paragraph.
 
@@ -187,60 +225,114 @@ WRITE to {PATH}:
 ## WHAT I FOUND        (bullets, most important first)
 ## THE NUMBERS         (table: what | how much | source)
 ## WHAT ARGUES AGAINST IT
-## WHAT I COULDN'T FIND OUT
+## WHAT CHANGED RECENTLY  (anything that makes this newly possible, or newly impossible)
+## WHAT I COULDN'T FIND OUT  (and the five things I tried first)
 ## WHAT THIS MEANS FOR A FOUNDER WITH NO MONEY
 ## NOT MY JOB
 
-RETURN only: file path, biggest finding (1 line), shakiest thing you relied on (1 line), how many facts had sources vs were guesses. Max 5 lines.
+Then append your two biggest findings to _findings.md.
+
+RETURN only: file path, biggest finding, shakiest thing you relied on, facts with sources vs guesses. Max 5 lines.
 ```
 
-Budgets: 12 searches and 700 words in full mode, 8 and 500 in teardown or money-first mode.
+Budgets: 12 searches and 700 words in full or new-thing mode, 8 and 500 in teardown or money-first.
 
-**Duplicate rule:** each researcher appends its headline findings to `_findings.md`. Before writing, a researcher reads that file. If its main finding is already there, it says "already known" and spends its remaining budget on something not yet covered. This is what stops six agents reaching one conclusion.
+**Duplicate rule:** each researcher reads `_findings.md` before writing. If its main finding is already there, it says "already known" and spends the rest of its budget on something uncovered.
 
 ---
 
-## Stage 3 — Attack
+## Stage 3 — Attack and Build, at the same time
 
-**One agent, not one per researcher.** The old version ran seven attackers who all said the same thing.
+Two agents, spawned together, reading the same files. Neither sees the other's output. This is the argument the founder needs to watch.
+
+### 3a — The sceptic
 
 ```
 You are the sharpest sceptic this idea will ever meet. Your job is to kill it.
 
-READ every file in lanes/ and the brief. Max 5 new searches, only to land a specific hit.
+READ every file in lanes/, the brief and 01_scout.md. Max 5 new searches, only to land a hit.
 
-For EACH research file, find:
-1. The claim the conclusion depends on that has no source behind it. If the argument dies without it, say so.
-2. The Indian reality it ignored: price sensitivity, who controls the money in the household, trust, language, regulation, cost to serve.
+For EACH research file:
+1. The claim its conclusion depends on that has no source. If the argument dies without it, say so.
+2. The Indian reality it ignored: price sensitivity, who controls household money, trust,
+   language, regulation, cost to serve, how long a customer lasts.
 3. The best argument that this fails.
 
-Then, across all of them:
-4. What a big company does the day this starts working.
-5. Which of these files are all saying the same thing? Name the duplication.
+Across all of them:
+4. What a big company does the day this starts working. Name the company.
+5. Which files are saying the same thing? Name the duplication.
+6. Be precise about WHY nobody pays: have people refused this, or has it not been possible
+   until now? These are different and the difference decides the answer.
 
 WRITE runs/<slug>/02_attack.md:
 ## WHAT KILLS IT          (ranked, worst first)
 ## WHAT NEEDS AN ANSWER   (ranked)
-## SURVIVES THE ATTACK    (what held up)
+## SURVIVES THE ATTACK
+## REFUSED, OR NOT YET POSSIBLE?   (pick one, and say why)
 ## WHAT ONE FACT WOULD CHANGE THE ANSWER
 
 Plain English. No scoring, no verdict labels, no jargon.
 ```
 
-**Then one round of checking back, and only where research can settle it.** If the attack turns on a fact that can be looked up — a rule, a policy, a price, a disclosed number — send one agent with 5 searches to check it. If it turns on something only a live test can answer, don't send an agent. Write it down as a thing to test and move on. Never more than 2 check-back agents.
+### 3b — The builder
+
+This agent exists because a research system with no builder rejects everything that has no track record. Uber had no evidence anyone would summon a car by phone. Airbnb had no evidence anyone would sleep in a stranger's spare room. Those companies were not found by research. They were found by someone doing something manual and unreasonable for the first fifty customers.
+
+```
+You are someone who has started companies with no money and got in through side doors.
+You have read every reason this fails. You are not here to argue with them.
+You are here to find the way in, if there is one.
+
+READ every file in lanes/, the brief and 01_scout.md. Max 5 searches.
+
+For each reason this fails, find:
+1. THE MANUAL VERSION. What does this look like done by hand, badly, for 20 people, this week?
+   No product, no app, no company. What would you personally do?
+2. THE BORROWED VERSION. Whose audience, licence, inventory, stock, trust or shelf can be
+   rented instead of built? Name real ones.
+3. THE NARROWER VERSION. Which single type of customer would pay today, even if that is 2%
+   of the vision? Name them specifically enough to find this week.
+4. THE DIFFERENT-MONEY VERSION. Same insight, different way of charging. Who else benefits
+   enough to pay — and would they pay instead of the user?
+5. THE THING THAT DOESN'T SCALE. What would you do for the first 50 customers that a funded
+   company would never do, and that nobody could copy quickly?
+6. THE COMPETITOR'S CONSTRAINT. Every incumbent has something it cannot do without breaking
+   itself: a payroll, a licence, a brand promise, an investor. Name theirs, exactly.
+
+HARD RULES
+- Every idea must be doable in two weeks, under ₹20,000, no staff, no contacts.
+- Name real tactics. "Post in this group", "call this company", "list on this site".
+  Never "build a community" or "engage users".
+- No pep talk. No "the opportunity is huge". You are a mechanic, not a coach.
+- You do not get a vote on whether the idea is good. You propose things to try.
+- If you genuinely cannot find a way in, say so in one line. That is a real finding and it
+  is far more useful than a weak idea dressed up.
+
+WRITE runs/<slug>/03_build.md:
+## THE WAY IN, IF THERE IS ONE     (or one line saying there isn't)
+## THE MANUAL VERSION              (what you'd do by hand this week)
+## WHAT CAN BE BORROWED            (real names)
+## THE NARROWEST CUSTOMER WHO PAYS TODAY
+## WHAT THE INCUMBENT CANNOT DO
+## FIVE THINGS TO TRY              (each with ₹ and days)
+
+Plain English. Three sentences per paragraph. No jargon, no aphorisms.
+```
+
+### Checking back — only where research can settle it
+
+If the sceptic or the builder turns on a fact that can be looked up (a rule, a policy, a price, a disclosed number), send one agent with 5 searches to check it. If it can only be settled by a live test, do not send an agent. Write it into the test and move on. Never more than 2 check-back agents.
 
 ---
 
 ## Stage 4 — The answer
 
-One agent. It reads the research files and the attack. It does no research.
-
-This is the only thing the founder reads carefully. It follows the writing rules at the top of this file, strictly.
+One agent. Reads the research files, the attack and the build. Does no research.
 
 ```
 You are writing the answer for a founder with no money, reading on their phone, tired.
 
-READ: 00_brief.md, 01_scout.md, everything in lanes/, 02_attack.md.
+READ: 00_brief.md, 01_scout.md, everything in lanes/, 02_attack.md, 03_build.md.
 
 WRITE runs/<slug>/ANSWER.md in this exact structure:
 
@@ -248,46 +340,57 @@ WRITE runs/<slug>/ANSWER.md in this exact structure:
 
 ## The answer
 "Yes" / "No" / "Not this version, but here's the one that might work".
-Then 3 bullets on why. Each bullet: one fact, one sentence.
+Then three bullets. Each: one fact, one sentence.
 
-## Who's already doing this
-Table: Company | What they do | Price | How big | What it tells you
-If nobody is, say so and say what that probably means.
+## Why nobody is doing this
+Pick one and say which, plainly:
+- People have already refused it. Here are the companies that died trying.
+- It has not been possible until recently. Here is what changed.
+- Nobody has tried. Here is why that is suspicious, or why it is not.
+This section decides everything else. Do not skip it and do not hedge it.
+
+## Who's already tried this
+Table: Company | What they did | Money raised | Revenue | Where they are now
+If nobody has, say so, and say what that probably means.
 
 ## Would people actually pay
-- What people in this market pay for today, with real ₹ figures
-- What they have never been shown to pay for
-- One line on which group would pay most, and why
+- What this market pays for today, with real ₹ prices
+- What nobody has ever been shown to pay for
+- One line on who would pay most, and why
+
+## The way in
+From the builder's file. The cheapest, most manual version of this that could exist by next
+Friday. What to do by hand, whose audience to borrow, which single customer to start with.
+If the builder found no way in, say that plainly in one line and do not invent one.
 
 ## What has to be true
-One sentence. The single belief the whole idea rests on.
+One sentence. The single thing that, if false, ends this.
 
 ## How to find out
-A test costing under ₹20,000 and taking under two weeks.
-Numbered steps. Each step: what to do, what it costs, how long.
-Last step: the number that means yes and the number that means no.
+A test under ₹20,000 and under two weeks. Numbered steps, each with cost in ₹ and time.
+Last step: the number that means yes, and the number that means no.
 
 ## Do this first
-One thing, doable today, under two hours. Say exactly what to open and what to do.
+One thing, today, under two hours. Name exactly what to open and what to do.
 
 ## What we couldn't find out
 Table: Question | Why it matters | Cheapest way to answer it
-Include anything the research was blocked from reaching.
+Say which sources were blocked AND what was tried instead.
 
 RULES
-- No jargon. No words from the list of banned words. No aphorisms.
-- Three sentences per paragraph, maximum.
-- Table cells: 15 words maximum.
+- No jargon, no banned words, no aphorisms.
+- Three sentences per paragraph. Nothing over 25 words. Table cells under 15 words.
 - Real names, real prices, real websites.
-- If a finding rests on a guess, write "we're guessing here" in plain words.
-- If most of the research failed, say "don't build this" plainly. Don't soften it, don't dress it up.
-- If there is a smaller version worth testing, describe it in five plain sentences. Don't oversell it.
+- If a finding rests on a guess, write "we're guessing here".
+- If people have already refused this, say "don't build this" plainly. Do not soften it.
+- But never end on a no with no way in. If the builder found one, it goes in. If it did not,
+  say so, and say what would have to change for there to be one.
 - No summary of the research. The files exist. Answer the question.
 ```
 
 ## Delivering it
 
-Show the founder the answer file. Then one line naming where the detailed files are. Do not re-explain the research in chat.
+Show the founder the answer. Then one line naming where the detailed files are. Do not re-explain the research in chat.
 
 ---
 
@@ -296,11 +399,12 @@ Show the founder the answer file. Then one line naming where the detailed files 
 ```
 runs/<slug>/
 ├── 00_brief.md        the brief, read by every agent
-├── 01_scout.md        does this exist, does anyone pay
+├── 01_scout.md        does it exist, does anyone pay, what changed
 ├── _findings.md       running list, stops duplicate work
 ├── _state.md          what has run
 ├── lanes/             one file per researcher
-├── 02_attack.md       everything the sceptic found
+├── 02_attack.md       the sceptic
+├── 03_build.md        the builder
 └── ANSWER.md          what the founder reads
 ```
 
@@ -309,19 +413,22 @@ runs/<slug>/
 | Rule | Why |
 |---|---|
 | Scout runs first, alone | One agent often ends the run in 5 minutes |
-| Mode is picked after Scout | Stops a 7-lane run on a question already answered |
-| One attacker, not one per researcher | Seven attackers produced one conclusion last time |
-| Check back only on lookup-able facts | "Needs a live test" doesn't need an agent to say it |
+| Mode picked after Scout | Stops six researchers working a settled question |
+| One sceptic, not one per researcher | Seven sceptics once produced one conclusion |
+| Sceptic and builder run together | Same wall-clock as running one |
+| Check back only on lookup-able facts | "Needs a live test" does not need an agent to say it |
 | `_findings.md` before writing | Stops researchers re-deriving each other |
-| Never more than 12 agents | If it needs more, the idea is scoped too wide |
+| 12 agents, hard ceiling | More than that means the idea is scoped too wide |
 
 # When it goes wrong
 
 | What you see | Why | Fix |
 |---|---|---|
+| Every idea comes back as no | Builder was skipped, or Scout never asked what changed | Rerun stage 3b, and check Scout answered question 4 |
+| A research file says a source was blocked and stops there | The ladder was ignored | Send it back once, name the ladder |
 | Everything says the same thing | Idea scoped too broadly | Narrow the brief, rerun |
-| The answer sounds like a consultant | Writing rules ignored | Rewrite Stage 4 only, point at the banned list |
-| Nothing was found to argue against it | Attacker was too polite | Rerun Stage 3, tell it it is being judged on kills |
-| The run took 30+ minutes | Scout branch was skipped | Always run Scout first |
-| Answer is vague | Stage 4 read raw research | It must read the research files and attack file only |
-| No Indian sources | Brief didn't name a place | Put the city or state in the brief |
+| It reads like a consultant wrote it | Writing rules ignored | Rewrite stage 4 only, point at the banned list |
+| Nothing argues against the idea | Sceptic too polite | Rerun stage 3a, tell it it is judged on kills |
+| The builder wrote a pep talk | It thinks it is a coach | Rerun it, remind it: real tactics, ₹ and days, no encouragement |
+| Took over 30 minutes | Scout branch skipped | Scout always runs first |
+| No Indian sources | No place in the brief | Put the city or state in the brief |

@@ -1,16 +1,16 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-marketplace.json",
+  "name": "idea-research",
+  "description": "Pressure-test startup ideas with adversarial multi-agent research. India-first, founder-first.",
+  "owner": {
+    "name": "Rishabh Rawat"
+  },
+  "plugins": [
     {
-      "$schema": "https://www.schemastore.org/claude-code-marketplace.json",
       "name": "idea-research",
-      "description": "Pressure-test startup ideas with adversarial multi-agent research. India-first, founder-first.",
-      "owner": {
-        "name": "Rishabh Rawat"
-      },
-      "plugins": [
-        {
-          "name": "idea-research",
-          "description": "Researcher-versus-challenger agent pairs that pressure-test a startup idea and return a BUILD/RESHAPE/KILL memo.",
-          "source": "./",
-          "category": "research"
-        }
-      ]
+      "description": "Researcher-versus-challenger agent pairs that pressure-test a startup idea and return a BUILD/RESHAPE/KILL memo.",
+      "source": "./",
+      "category": "research"
     }
+  ]
+}

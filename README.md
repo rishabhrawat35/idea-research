@@ -1,6 +1,6 @@
 # Idea Research
 
-**Checks whether a startup idea is worth building, by making research agents argue with each other.**
+**Checks whether a startup idea is worth building. One set of agents digs, one tries to kill it, one tries to find the way in.**
 
 Ask any AI "is this a good startup idea?" and you get a confident yes. This does the opposite: it tries to kill the idea, and tells you plainly what survived.
 
@@ -39,6 +39,15 @@ Ask any AI "is this a good startup idea?" and you get a confident yes. This does
 
 Written for a founder with no money, no team and no network. Every finding has to matter to that person or it gets cut.
 
+### The two mistakes it must not make
+
+| Mistake | What it looks like |
+|---|---|
+| **Saying yes to a corpse** | The idea has been tried and refused. Softening that helps nobody. |
+| **Saying no to something new** | Nobody paid to summon a car by phone before GPS phones existed |
+
+Those look identical if you only count today's revenue. Telling them apart is the whole job, and it is why Scout asks what changed recently, and why a builder runs alongside the sceptic.
+
 ---
 
 ## How it runs
@@ -56,11 +65,12 @@ Five stages. Stage 1 often ends the run in five minutes, which is the point.
         ▼
  ┌─────────────┐
  │ 1  SCOUT    │  1 agent · 4 min
- │             │  does this exist already? does anyone pay for it?
+ │             │  exists? anyone paying? and WHAT CHANGED recently?
  └──────┬──────┘
         │
         ├── competitor found ──▶ teardown mode  (3 researchers)
-        ├── nobody pays ───────▶ money-first mode (3 researchers)
+        ├── nobody pays, refused ▶ money-first mode (3 researchers)
+        ├── nobody pays, but the ground moved ▶ new-thing mode (4)
         └── open field ────────▶ full mode (5-6 researchers)
         │
         ▼
@@ -69,10 +79,11 @@ Five stages. Stage 1 often ends the run in five minutes, which is the point.
  │             │  one file each, sources on everything
  └──────┬──────┘
         ▼
- ┌─────────────┐
- │ 3  ATTACK   │  1 agent · 5 min
- │             │  reads everything, tries to kill all of it at once
- └──────┬──────┘
+ ┌──────────────────────────────┐
+ │ 3  ATTACK  ⚔  BUILD          │  2 agents · 5 min
+ │  sceptic tries to kill it    │
+ │  builder tries to find a way │
+ └──────────────┬───────────────┘
         ▼
  ┌─────────────┐
  │ 4  ANSWER   │  1 agent · 4 min
@@ -82,7 +93,7 @@ Five stages. Stage 1 often ends the run in five minutes, which is the point.
    yes / no / not this version
 ```
 
-**Total: 6-10 agents, 20-25 minutes.** Never more than 12.
+**Total: 7-11 agents, 20-25 minutes.** Never more than 12.
 
 ### Stage 0 — Brief
 
@@ -90,13 +101,25 @@ No agents, so it's free. Up to 3 questions, only if the idea can't be pinned dow
 
 ### Stage 1 — Scout
 
-One agent. Ten searches. It answers three things:
+One agent. Twelve searches. It answers four things:
 
 1. Does this already exist in India? Name, price, size, funding.
 2. Does anyone here pay for this exact thing, or only for something next to it?
 3. What did the closest existing company choose to do that looks expensive? That's usually a wall they hit.
+4. **What changed?** What became possible in the last 24-36 months that wasn't before. Whether it works in another country. And if companies died here, what killed them and whether that thing still exists.
 
-Then the run branches. If a funded competitor is already doing it, there's no point running a full open-field investigation — it switches to taking that competitor apart instead.
+Question 4 is the one that stops good new ideas being thrown out. A company that died of a constraint which no longer exists is evidence *for* an idea, not against it.
+
+Then the run branches:
+
+| Scout finds | Run becomes |
+|---|---|
+| Funded competitor, nothing changed since | Teardown, 3 researchers |
+| Nobody pays, and people already refused it | Money-first, 3 researchers |
+| Nobody pays, but no dead bodies or the ground moved | **New-thing mode**, 4 researchers |
+| Actually open | Full, 5-6 researchers |
+
+**New-thing mode** stops asking "who pays today". It asks what would have to be true, who the earliest adopters are, where the new behaviour is visible already, and what it costs to be first.
 
 ### Stage 2 — Research
 
@@ -107,11 +130,28 @@ Researchers run in parallel, one file each. Each one:
 - Must report what argues **against** the idea
 - Checks a shared findings list first, so agents don't re-derive each other's work
 
-### Stage 3 — Attack
+### Stage 3 — Attack and Build, together
 
-**One sceptic reads everything at once.** It looks for claims with nothing behind them, Indian realities the research skipped, and the best argument that this fails. It also names which files are just repeating each other.
+Two agents at once, reading the same files, neither seeing the other.
 
-Then facts get checked — but only facts that can actually be looked up. If something can only be settled by a live test, that gets written down as a test, not handed to another agent.
+**The sceptic** looks for claims with nothing behind them, Indian realities the research skipped, and the best argument that this fails. It must also say plainly whether nobody pays because people *refused* this, or because it *wasn't possible yet*.
+
+**The builder** exists because a research system with no builder rejects everything that has no track record. Uber had no evidence anyone would summon a car by phone. Airbnb had no evidence anyone would sleep in a stranger's spare room. Neither was found by research — both were found by someone doing something manual and unreasonable for the first fifty customers.
+
+The builder has to find six things, or say plainly that it can't:
+
+| | What it looks for |
+|---|---|
+| The manual version | Done by hand, badly, for 20 people, this week |
+| The borrowed version | Whose audience, licence, stock or shelf you rent instead of build |
+| The narrower version | The one customer type who'd pay today, even at 2% of the vision |
+| The different money | Same insight, someone else pays |
+| The unscalable thing | What you'd do for the first 50 that a funded company never would |
+| The incumbent's constraint | What they cannot do without breaking a payroll, licence or promise |
+
+Hard rules on the builder: every idea doable in two weeks, under ₹20,000, no staff, no contacts. Real tactics with names, never "build a community". No pep talk. It gets no vote on whether the idea is good — it proposes things to try.
+
+Then facts get checked, but only facts that can actually be looked up. If something can only be settled by a live test, that goes into the test, not to another agent.
 
 ### Stage 4 — Answer
 
@@ -166,6 +206,19 @@ Two more rules that shape quality:
 - **Finding nothing against the idea is treated as not having looked.**
 - **Every finding must matter to someone with no money**, or it gets cut.
 
+### Blocked sources are not an excuse
+
+An earlier run hit a blocked Reddit and simply reported it as a limitation. That is a researcher giving up. There is now a ladder every researcher works down, and it has to say which rungs it tried:
+
+1. Search for the content instead of the page (threads get quoted in search results)
+2. A different community on the same subject: forums, app store reviews, YouTube comments, Trustpilot
+3. **The same question about another country** — often better evidence than the local answer, and it feeds the "what changed" test
+4. Someone who already did the reading: market reports, journalism, dissertations
+5. The browser tools, if the session has them, and actually go look
+6. Only then "could not find out", listing the five things tried
+
+"It was blocked" on its own is sent back once.
+
 ---
 
 ## How it stays fast
@@ -217,14 +270,16 @@ Also banned: the system's own vocabulary. You never see the words lane, verdict,
 | Section | What's in it |
 |---|---|
 | **The answer** | Yes, no, or "not this version". Three bullets of why. |
+| **Why nobody is doing this** | Refused, not yet possible, or untried. This decides everything else. |
 | **Who's already doing this** | Table: company, what they do, price, size, what it tells you |
 | **Would people actually pay** | What this market pays for today, in ₹. What it has never paid for. |
+| **The way in** | The cheapest manual version that could exist by Friday. Or a plain "there isn't one". |
 | **What has to be true** | One sentence. The belief the whole idea rests on. |
 | **How to find out** | A test under ₹20,000 and under two weeks. Numbered, costed. Ends with the number that means yes. |
 | **Do this first** | One thing, today, under two hours |
 | **What we couldn't find out** | Table: question, why it matters, cheapest way to answer |
 
-If most of the research failed, it says "don't build this" plainly. It doesn't soften it.
+If people have already refused this, it says "don't build this" plainly and doesn't soften it. But it never ends on a no with no way in. If the builder found one, it's in there. If it didn't, the answer says so, and says what would have to change for there to be one.
 
 ---
 
@@ -347,6 +402,10 @@ Runs are kept. Comparing an idea against the same idea reshaped a month later is
 | Check back only on lookup-able facts | Check back on everything | Most challenges can only be settled by a live test, and an agent can't run one |
 | "What would kill this" written first | Judge at the end | Deciding what failure means after seeing the data is how you get a yes you didn't earn |
 | Banned-word list in the skill | Trusting tone instructions | "Write plainly" doesn't work. A list of banned words does. |
+| Scout asks what changed | Only asking who pays today | "Nobody pays" is true of every new category before it exists. Without this the system rejects anything genuinely new. |
+| A builder runs against the sceptic | Sceptic alone | A system with only critics says no to everything with no track record. The builder finds the manual, borrowed and narrower versions research can't surface. |
+| The builder gets no vote | Builder scores the idea | Two agents arguing to a score is theatre. One proposes tests, the other attacks, the writer decides. |
+| Ladder for blocked sources | Reporting the block | An agent that stops at a 403 has done a quarter of the job |
 | India and ₹0 as defaults | Generic global framing | Generic framing gives generic findings |
 
 ---
