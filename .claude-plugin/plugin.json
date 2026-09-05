@@ -1,7 +1,7 @@
     {
       "name": "idea-research",
-      "version": "1.0.0",
-      "description": "Adversarial multi-agent research system for pressure-testing startup ideas in the Indian market. Researcher-versus-challenger agent pairs, disk-backed state, BUILD/RESHAPE/KILL verdict.",
+      "version": "2.0.0",
+      "description": "Checks whether a startup idea is worth building, using research agents that argue against each other. India-first, plain English, answers in under 25 minutes.",
       "author": {
         "name": "Rishabh Rawat",
         "url": "https://github.com/rishabhrawat35"
