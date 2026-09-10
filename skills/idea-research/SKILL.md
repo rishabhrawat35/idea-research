@@ -9,23 +9,19 @@ metadata:
 
 # Idea Research
 
-**Version 5.0.0** · keep this in step with `.claude-plugin/plugin.json`, the only version the desktop app shows.
-Bump both on every change: patch for wording, minor for a new rule or stage, major for a pipeline change.
+**Version 6.0.0** · keep this in step with `.claude-plugin/plugin.json`, the only version the desktop app shows. Bump both on every change: patch for wording, minor for a new rule or stage, major for a pipeline change.
 
-Check whether an idea is worth building. The market is India by default and money is in ₹. The reader is a founder
-with no money, no team and no network, reading on a phone at 11pm. The job is to find out what is true. Use it for
-"is this worth building", "should I build X", "is there a gap here", "would anyone fund this in India". Do not use
-it for a pitch deck, a financial model, a market-size lookup, or a company that already exists.
+Check whether an idea is worth building. The market is India by default and money is in ₹. The reader is a founder with no money, no team and no network, reading on a phone at 11pm. The job is to find out what is
+true. Use it for "is this worth building", "should I build X", "is there a gap here", "would anyone fund this in India". Do not use it for a pitch deck, a financial model, a market-size lookup, or a company that
+already exists.
 
 ## The principle
 
-Search asymmetrically, judge symmetrically. Optimism belongs in how many angles get tried: more sources, more
-countries, more ways in. Neutrality belongs in the conclusion, where a no and a yes need equal evidence and the
-same voice.
+Search asymmetrically, judge symmetrically. Optimism belongs in how many angles get tried: more sources, more countries, more ways in. Neutrality belongs in the
+conclusion, where a no and a yes need equal evidence and the same voice.
 
-Getting it backwards produces two mistakes: yes to a corpse, because most ideas nobody pays for are ideas people
-already refused, and no to something new, because nobody paid to summon a car from a phone before GPS phones
-existed. Telling a refused idea from an untried one is most of the work.
+Getting it backwards produces two mistakes: yes to a corpse, because most ideas nobody pays for are ideas people already refused, and no to something new, because nobody paid
+to summon a car from a phone before GPS phones existed. Telling a refused idea from an untried one is most of the work.
 
 # HOW TO WRITE
 
@@ -44,8 +40,7 @@ Every agent inherits this section. Agent prompts point at it and never restate i
 
 The system's own vocabulary never reaches the founder: no lane, no verdict tag, no confidence label, no mode name.
 
-1. **Complete sentences, always.** "Pass. ₹99, customer leaves in 7 months" is unreadable. "An investor would
-   decline, because a pregnancy customer stops needing you after seven months" can be read.
+1. **Complete sentences, always.** "Pass. ₹99, customer leaves in 7 months" is unreadable. "An investor would decline, because a pregnancy customer stops needing you after seven months" can be read.
 2. **Say the action, not a saying about it.** "Run Meta ads targeting women 22-38 for ₹12,000", not "buy traffic".
 3. **No aphorisms.** If a sentence would fit on a poster, delete it. Never state a fact then restate it as wisdom.
 4. **No invented quotes.** Quotation marks need a real person, a real source and the link. Nobody was interviewed.
@@ -56,10 +51,8 @@ The system's own vocabulary never reaches the founder: no lane, no verdict tag, 
 9. **Nothing over 25 words, three sentences per paragraph.** Three or more related data points make a table row.
 10. **One fact has one owning section.** Later mentions cross-reference it. A restatement is a defect in the prose.
 11. **Table cells run to 15 words, preferably five.** No cell that is only a hedge, no column full of paragraphs.
-12. **Headings state the finding, not the topic,** and read correctly with the section covered up. Front-load the
-    words that carry meaning: "If the numbers are wrong" becomes "The case holds if conversion falls by a third,
-    and breaks if it halves"; "Why nobody is doing this" becomes "Three companies tried and stopped, for a reason
-    that no longer applies".
+12. **Headings state the finding, not the topic,** and read correctly with the section covered up. Front-load the words that carry meaning: "If the numbers are wrong" becomes "The case holds if conversion falls by a
+    third, and breaks if it halves"; "Why nobody is doing this" becomes "Three companies tried and stopped, for a reason that no longer applies".
 
 # NEVER STOP AT A BLOCKED SOURCE
 
@@ -82,20 +75,27 @@ Only then write "could not find out", listing the rungs you tried. A file that s
 | 2 Research | 3-6 | 9 min | Parallel diggers, one file each |
 | 3 Ledger | 0 | 10 sec | Three scripts build the evidence base |
 | 4 The pair | 2 | 5 min | Strongest case for, strongest case against |
-| 5 Reconcile | 1 | 4 min | Weigh both cases, do the arithmetic |
+| 5 Reconcile | 2 | 4 min | Weigh both cases, do the arithmetic, challenge a close call |
 | 6 Write | 1 | 4 min | The answer |
-| 7 Lint | 0 | 5 sec | A script checks the rules, strictly |
-| 8 Edit and revise | 2 | 4 min | One rejects the prose, one applies the fixes |
-| 9 Render | 0 | 1 min | A page you can share |
+| 7 Design and structure | 2 | 5 min | One picks the theme and the components, a peer judges the rendered page |
+| 8 Lint | 0 | 5 sec | A script checks the rules, strictly |
+| 9 Edit and revise | 2 | 4 min | One rejects the prose, one applies the fixes |
+| 10 Render | 0 | 1 min | A page you can share |
 
-Ten to thirteen agents on a typical run, about 33 minutes. The longest legal path is seventeen, never more: Scout,
-six researchers, two specialists, the pair, the reconciler, two check-backs, the writer, the editor, the reviser.
+Thirteen to sixteen agents on a typical run, about 38 minutes: Scout, the researchers, the pair, the reconciler with its
+challenger, the writer, the design agent, the UX peer, the editor and the reviser. The longest legal path is twenty, never
+more, which adds two specialists and two check-backs to that same list. The challenger sits inside the typical count,
+because the modes that spend the fewest researchers are the ones whose call tends to come back refused.
 
-**Quick mode.** For quick, triage, or comparing more than one idea, run stages 0, 1, 2, 3, 6 and 7: three
-researchers, no pair, no editor, no page, about 19 minutes. Say which mode you are running. The writer then reads
-only the brief, `01_scout.md`, `_findings.md`, `lanes/`, `claims_summary.md` and `contradictions.md`, so Part 1
-takes certainty of evidence from the sourced count and states no strength of view, Part 2 drops the section on
-where the two cases disagreed, and Part 3 takes its way in from the lanes.
+**Three gates, a hard rule.** A run ships only once all three of these exit 0, and a run still failing one is reported in
+chat rather than shipped quietly.
+- `python3 <skill folder>/lint.py runs/<slug>/ANSWER.md --strict`
+- `python3 <skill folder>/tools/theme_check.py runs/<slug>/theme.json --strict`, in any mode that runs stage 7, which quick mode does not
+- `python3 <skill folder>/tools/run_state.py check runs/<slug>/ --strict`
+
+**Quick mode.** For quick, triage, or comparing more than one idea, run stages 0, 1, 2, 3, 6, 8 and 10: three researchers, no pair, no design stage, no editor, and a page on the default theme, so stage 10 runs without its `--theme` flag, about 20 minutes. Say which mode you are running. The writer then
+reads only the brief, `01_scout.md`, `_findings.md`, `lanes/`, `claims_summary.md` and `contradictions.md`, so Part 1 takes certainty of evidence from the sourced count and states no strength of view, Part 2 drops
+the section on where the two cases disagreed, and Part 3 takes its way in from the lanes.
 
 ## Stage 0. Brief
 
@@ -111,7 +111,8 @@ WHY NOW: what changed to make this possible today (a blank one is itself a findi
 NOT RESEARCHING: what nobody should chase        WHAT WOULD KILL THIS: the findings that would end it
 ```
 
-Write "what would kill this" before any research, because it stops the system talking itself into a yes.
+Write "what would kill this" before any research, because it stops the system talking itself into a yes. Open the run's state file here with `python3 <skill folder>/tools/run_state.py init runs/<slug>/ --mode full`,
+naming the mode you expect and running init again if Scout's branch changes it. It accepts six mode tokens and no others: full, teardown, money-first, new-thing, proxy, quick. Every stage closes the way this one does, with `python3 <skill folder>/tools/run_state.py done runs/<slug>/ brief`.
 
 ## Stage 1. Scout
 
@@ -120,13 +121,12 @@ One agent, twelve searches, 500 words, writes `01_scout.md`, returns five lines.
 1. **Does this exist in India?** Every real one, with price in ₹, users, money raised and current status.
 2. **Does anyone pay for the exact thing, or only for something next to it,** such as a product or a person's time?
 3. **What did the closest company choose to do that looks expensive or awkward?** That choice is a wall they hit.
-4. **What changed?** What became possible in the last 24 to 36 months: a cost falling, a new platform, a rule
-   change, a behaviour shift. Does this make money elsewhere, at what price and size? Are there dead bodies here,
-   what killed them, and has that changed? A company that died of a constraint that has gone is evidence for it.
+4. **What changed?** What became possible in the last 24 to 36 months: a cost falling, a new platform, a rule change, a behaviour shift. Does this make money elsewhere, at what price and size? Are there dead
+   bodies here, what killed them, and has that changed? A company that died of a constraint that has gone is evidence for it.
 
-Scout's findings are provisional and go into later prompts marked as such. A researcher who finds a Scout claim
-wrong says so, and the correction goes into `_findings.md`. A wrong fact injected as known is worse than no fact.
-Then the orchestrator branches, saying which mode and why in one line before spending more agents.
+Scout's findings are provisional and go into later prompts marked as such. A researcher who finds a Scout claim wrong says so, and the correction goes into `_findings.md`. A wrong fact injected as known is worse
+than no fact. Then the orchestrator branches, saying which mode and why in one line before spending more agents, and records the branch with `python3 <skill folder>/tools/run_state.py done runs/<slug>/ scout --note
+"<mode> mode"`.
 
 | What Scout found | What to run |
 |---|---|
@@ -138,8 +138,7 @@ Then the orchestrator branches, saying which mode and why in one line before spe
 
 ## Stage 2. Research
 
-All researchers go out in one message, one file each, five lines back. Each gets four fields and an identity line,
-because identity alone does not improve reasoning and the procedure does.
+All researchers go out in one message, one file each, five lines back. Each gets four fields and an identity line, because identity alone does not improve reasoning and the procedure does.
 
 | ID | Identity line | OBJECTIVE | SOURCES | BOUNDARIES |
 |---|---|---|---|---|
@@ -167,12 +166,10 @@ with a section per method, each carrying a number, a date and a source URL, or "
 
 ### Specialists, nought to two by domain
 
-Health, pharma and medtech get someone who reads NMC, CDSCO and ABDM rules and prices compliance. Fintech, lending
-and insurance get RBI, IRDAI, SEBI and DPDP. Hardware and D2C get customs, BIS, landed cost and order sizes.
-Sports, education and agri get the person doing the job today, the coach or teacher or farmer. B2B gets the channel
-partner and the procurement head who signs. Consumer social and creator tools get a community moderator who knows
-platform risk, and what happens when the platform changes its rules. Where nothing fits, invent one, naming a real
-job title and what that person would know. Cap at two, because needing more means the idea is scoped too wide.
+Health, pharma and medtech get someone who reads NMC, CDSCO and ABDM rules and prices compliance. Fintech, lending and insurance get RBI, IRDAI, SEBI and DPDP. Hardware and D2C get customs, BIS,
+landed cost and order sizes. Sports, education and agri get the person doing the job today, the coach or teacher or farmer. B2B gets the channel partner and the procurement head who signs. Consumer
+social and creator tools get a community moderator who knows platform risk, and what happens when the platform changes its rules. Where nothing fits, invent one, naming a real job title and what that
+person would know. Cap at two, because needing more means the idea is scoped too wide.
 
 ```
 You are {IDENTITY LINE}.
@@ -199,8 +196,10 @@ RETURN only: file path, biggest finding, shakiest thing you relied on, facts wit
 any correction to KNOWN SO FAR. Max 5 lines.
 ```
 
-Search budgets: twelve in full, new-thing or proxy mode, eight in teardown or money-first. Item caps rather than
-word caps, because agents obey those and a reader can check them.
+Search budgets: twelve in full, new-thing or proxy mode, eight in teardown or money-first. Item caps rather than word caps,
+because agents obey those and a reader can check them. Every cap here is a ceiling and never a target, because one measured
+comparison found that asking an agent for a set number of items raised fabricated citations by 7 to 11 points. Every lane file back ends the stage:
+`python3 <skill folder>/tools/run_state.py done runs/<slug>/ research`.
 
 ## Stage 3. The evidence ledger, built by script
 
@@ -210,6 +209,7 @@ No agent writes the ledger by hand any more.
 python3 <skill folder>/tools/claims.py     runs/<slug>/            # claims.jsonl + claims_summary.md
 python3 <skill folder>/tools/contradict.py runs/<slug>/            # contradictions.md
 python3 <skill folder>/tools/verify.py     runs/<slug>/ --sample 8  # verify_queue.md + verify.json
+python3 <skill folder>/tools/run_state.py  done runs/<slug>/ ledger   # the three files above now exist
 ```
 
 - `claims.py` pulls every factual claim out of the research files and records whether a source sits behind it.
@@ -221,10 +221,9 @@ python3 <skill folder>/tools/verify.py     runs/<slug>/ --sample 8  # verify_que
 
 ## Stage 4. The symmetric pair
 
-Two agents, spawned in the same message, reading the same files, neither seeing the other's output. One builds the
-strongest case that this works, one the strongest case that it fails, and both write their assumptions first, so
-the reconciler can see what each rests on. Neither is graded on winning and neither keeps a score, because
-optimising toward a judge produces work that is more persuasive without being more correct.
+Two agents, spawned in the same message, reading the same files, neither seeing the other's output. One builds the strongest case that this works, one the strongest case that it fails, and both write their
+assumptions first, so the reconciler can see what each rests on. Neither is graded on winning and neither keeps a score, because optimising toward a judge produces work that is more persuasive without
+being more correct. Both files back ends the stage: `python3 <skill folder>/tools/run_state.py done runs/<slug>/ pair`.
 
 ### 4a. The case that it works
 
@@ -308,59 +307,74 @@ Under HOW MUCH OF THIS IS SOLID, one line from claims_summary.md: X of Y claims 
 ```
 
 - **Check-backs.** If either case turns on a fact that can be looked up, such as a rule, a policy, a price or a
-  disclosed number, send one agent with five searches. It writes `05c_checkback.md`: the question, the answer, the
+  disclosed number, send one agent with five searches, every rule in HOW TO WRITE applying. It writes `05c_checkback.md`: the question, the answer, the
   source URL, and whether either case called that fact decisive. If only a live test can settle it, write it into
-  the test instead. Never more than two check-back agents.
+  the test instead. Never more than two check-back agents, and one that ran ends with
+  `python3 <skill folder>/tools/run_state.py done runs/<slug>/ checkback`.
+- **The reconcile challenger.** Run one only when the call came back "refused", or when certainty of evidence came back Low.
+  It is conditional because a peer on every node doubles the run, and coordination failure is what breaks multi-agent systems.
+  Same persona as the reconciler, zero searches, and every rule in HOW TO WRITE applies. It reads both case files, `05c_checkback.md`
+  if it exists, and `05_reconcile.md`, then writes `05d_challenge.md`: either one line endorsing the call and the reason it holds,
+  or the exact line it disputes, quoted, with what the research supports instead. It may not rewrite `05_reconcile.md`.
 - **The revisable verdict, a hard rule.** If `05c_checkback.md` carries a fact that either case named as decisive,
   the writer must re-open the conclusion and write it again from the new fact. A run once found the deciding fact in
   a check-back and shipped the opposite conclusion, because the answer was already drafted.
+- **Close the stage.** `python3 <skill folder>/tools/run_state.py done runs/<slug>/ reconcile`
 
 ## Stage 6. Write the answer
 
-One agent, 1,800 visible words across three parts of about 300, 700 and 800, plus appendices that open closed.
-The lint budget is 350, 800 and 800, so a part that runs slightly long still ships and one that runs double does not.
+One agent, three parts plus appendices that open closed, and no cap on words. A part runs as long as its content carries
+figures and sources. A paragraph carrying no figure, no source and no named thing is what gets cut, the linter flags exactly
+that paragraph, and length no longer fails a run. With every part and appendix in, close it with
+`python3 <skill folder>/tools/run_state.py done runs/<slug>/ write`.
 
 ```
 You are writing for a founder with no money, reading on a phone, tired.
-READ: 00_brief.md, 01_scout.md, _findings.md, everything in lanes/, 04a_case_for.md, 04b_case_against.md,
-05_reconcile.md, 05c_checkback.md if it exists, claims_summary.md, contradictions.md. YOU MAY NOT STATE ANY FACT
+READ: 00_brief.md, 01_scout.md, _findings.md, everything in lanes/, 04a_case_for.md, 04b_case_against.md, 05_reconcile.md,
+05c_checkback.md and 05d_challenge.md if they exist, claims_summary.md, contradictions.md. YOU MAY NOT STATE ANY FACT
 THAT IS NOT IN THOSE FILES. Zero searches, nothing from memory. Where a section needs a number nobody researched,
 write "the research did not find this". Every rule in HOW TO WRITE applies.
-OPEN by writing one line above the H1, outside the word count: which facts came back in 05c_checkback.md, and
-whether the conclusion moved because of them. If the file does not exist, say no check-back was needed.
+OPEN by writing one line above the H1: which facts came back in 05c_checkback.md, whether the conclusion moved because of
+them, and which line the challenger disputed in 05d_challenge.md. Where neither file exists, say neither was needed.
 DO NOT TREAT THE RESEARCH AS RELIABLE BY DEFAULT. In one real run, 154 of 222 claims carried no source. Check
 claims_summary.md before leaning on a figure, and badge any unsourced number [[warn:Thin]] or [[bad:Not found]].
 Evidence comes before opinion, and the conclusion appears in exactly one place, Part 1. Parts 2 and 3 may not
 restate it. Carry the two fields from 05_reconcile.md into Part 1 unchanged, as separate sentences.
 BLOCK TAGS. Write each tag as an HTML comment on its own line, applying to the block that follows, as in
-<!--::verdict|The call-->. The renderer binds the tag to a component and untagged prose stays prose, so tag only
-the blocks named below. Full list and examples in render/COMPONENTS.md. Do not type section numbers; CSS supplies
-them. Every heading takes a one-line italic subtitle under it, saying what is in that section.
+<!--::verdict|The call-->. Tag only the blocks named below, because stage 7 reads the finished answer and decides the
+rest, so do not invent structure here. Full list and examples in render/COMPONENTS.md. Never type a section number or
+the word PART into a heading; the stylesheet supplies both.
 OUTPUT, written to runs/<slug>/ANSWER.md:
-<!--::meta--> above the H1: date, mode, who it is for.
-# <Idea>: should you build it?
-## PART 1. THE ANSWER  (about 300 words)
-The call in one sentence under <!--::verdict-->: yes, no, or "not this version, but this one might". Then the number
-that drives it, then certainty of evidence and strength of view as two separate sentences, then the one condition
-that would change the answer, then the one thing to do today. Nothing else belongs here.
-## PART 2. WHAT THE EVIDENCE SHOWS  (about 700 words)
-Open with a <!--::stat--> block: the numbers this answer rests on, each as "value :: what it argues". Then findings
-only, no recommending, each one a <!--::finding--> block under a heading that states its finding: whether people
-refused this, could not have done it until now, or never tried it; who has already tried and where they ended up;
-what this market pays for today in ₹; what the proxy measures found; where the two cases disagreed and what settles
-it; what breaks if the numbers are wrong. Use <!--::note--> for context nobody would act on, <!--::quote--> only
-for a real quotation with its source, <!--::caution--> for a legal or safety line.
-## PART 3. WHAT TO DO  (about 800 words)
-The cheapest version that could exist by Friday, from 04a_case_for.md, or one line saying no way in was found and
-what would have to change. Where 04a found more than one way in, score them in a <!--::compare--> table: option,
-cost in ₹, days, what it proves, the row to run first in bold. The one belief everything rests on goes under
-<!--::important-->, a cost or limit that will bite under <!--::warn-->, a shortcut that saves real money under
-<!--::tip-->. A test under ₹20,000 and two weeks as <!--::steps-->, numbered, with cost and time, the last step
-naming the number that means yes and the number that means no. Then the people to ask, named specifically enough to
-find this week, with three questions; never ask "would you pay for X", ask what they pay for now and what they last
-abandoned. Then the next 90 days in three horizons, two items each, every item ending in the number that means it
-worked. A number in the plan is a target you are setting, not a finding, so say that once here and do not badge
-it. If the answer is no, this section is what it would take to prove us wrong, not a plan.
+<!--::meta--> above the H1: date, mode, who it is for. Then the H1, # <Idea>: should you build it?
+THREE PARTS, AND YOU WRITE ALL THREE HEADINGS. Each part opens with an ## heading of your own that states that part's
+finding in the answer's own words, under rule 12. What follows here describes what a part must contain, which is a topic,
+so no heading may be assembled out of these words. Nothing identifies a part except its order: the three run in the order
+below and stop at the first ## Appendix heading. One real answer headed them "THE ANSWER IS NOT THIS VERSION", "THE
+EVIDENCE SHOWS NOBODY WAS EVER ASKED TO BUY THIS" and "THE WAY IN IS A LAB-PAID BOOKING", which is the shape to aim at
+and not wording to reuse.
+FIRST PART, the call. The call in one sentence under <!--::verdict-->: yes, no, or "not this version, but this one
+might". Then the number that drives it, then certainty of evidence and strength of view as two separate sentences, then
+the one condition that would change the answer, then the one thing to do today. Nothing else belongs here.
+SECOND PART, the evidence. Open with a <!--::stat--> block: the numbers this answer rests on, each as "value :: what it
+argues". Then findings only, no recommending, each one a <!--::finding--> block under a heading that states its finding:
+whether people refused this, could not have done it until now, or never tried it; who has already tried and where they
+ended up; what this market pays for today in ₹; what the proxy measures found; where the two cases disagreed and what
+settles it; what breaks if the numbers are wrong. The problems the case against ranked go in one <!--::ranked--> block,
+worst first, one list item each, written "claim :: why it ranks there", because the order carries the argument. Use
+<!--::note--> for context nobody would act on, <!--::quote--> only for a real quotation with its source,
+<!--::caution--> for a legal or safety line.
+THIRD PART, what to do. The cheapest version that could exist by Friday, from 04a_case_for.md, or one line saying no way
+in was found and what would have to change. Where 04a found more than one way in, score them in a <!--::compare-->
+table: option, cost in ₹, days, what it proves, the row to run first in bold. Then, in this order, the one belief
+everything rests on under <!--::important-->, a cost or limit that will bite under <!--::warn-->, a test under ₹20,000
+and two weeks as <!--::steps-->, numbered, with cost and time, the last step naming the number that means yes and the
+number that means no, and a shortcut that saves real money under <!--::tip-->. Keep that order: no more than two
+callouts may stand next to each other, and the steps are what break this run of three. Then the people to approach as
+an <!--::asks--> block, one list item each, written "name :: why them :: question | question", each named specifically
+enough to find this week; never ask "would you pay for X", ask what they pay for now and what they last abandoned. Then
+the next 90 days as a <!--::timeline-->, phases in order, one list item a row, written "phase :: the item :: the number
+that means it worked". A number in the plan is a target you are setting, not a finding, so say that once here and do not
+badge it. If the answer is no, this part is what it would take to prove us wrong, not a plan.
 ## Appendix A. Sources and calculations for every figure
 From claims_summary.md unchanged, plus the sourced-against-guessed count.
 ## Appendix B. Where two sources disagree
@@ -369,8 +383,9 @@ From contradictions.md. If empty, say the script found no numeric conflict.
 Table: Question | Why it matters | Cheapest way to answer it. Name blocked sources and what was tried instead. One
 row for every action the editor could not stand up, saying what was proposed and what is missing behind it.
 ## Appendix D. How this looks from each side, and both cases in full
-From 05_reconcile.md and the two case files, carried over whole. Close the answer with a <!--::cards--> block
-pointing at the files behind it, one line each: the claim ledger, the contradiction check, the two cases.
+From 05_reconcile.md and the two case files, carried over whole, the ranked problems tagged <!--::ranked--> here too. Close
+the answer with a <!--::cards--> block pointing at the files behind it, one line each: the claim ledger, the contradiction
+check, the two cases.
 RULES
 - If people have already refused this, write "don't build this" plainly and do not soften it.
 - If the evidence says people are paying and the constraint that blocked this has lifted, write "build this"
@@ -382,15 +397,53 @@ RULES
   it. Running out of room means cutting detail from Parts 2 and 3, never a whole section.
 ```
 
-## Stage 7. Lint
+## Stage 7. Design and structure
 
-```bash
-python3 <skill folder>/lint.py runs/<slug>/ANSWER.md --strict   # add --json for machine-readable counts
+One agent decides how the page is built, reading the finished answer rather than guessing before it exists, and then a peer judges
+what it built. Neither may change a fact, a number or a sentence, because structure is the whole of this stage.
+
+```
+You have designed reports people read on a phone at 11pm, and you decide structure from a finished answer.
+READ runs/<slug>/ANSWER.md whole, and 00_brief.md. Zero searches. Every rule in HOW TO WRITE applies to what you write.
+1. THEME. Pick ONE by the world this idea sits in: clinical for health, medtech, diagnostics and pharma; warm for consumer, family, wellness, education and food; industrial for hardware, manufacturing, logistics and B2B; financial for fintech, lending, insurance and markets.
+   Tune the accent, and nothing else. Write runs/<slug>/theme.json as {"theme": one of those four, "accent": "#RRGGBB", "reason": one sentence naming what in this idea's world chose it, "type": {"display": ..., "body": ...}, "density": "compact|regular"}, and nothing else.
+   Then run `python3 <skill folder>/tools/theme_check.py runs/<slug>/theme.json --strict`, and while it exits 1 move the accent lighter or darker until it passes, then say what you moved.
+2. LAYOUT. Walk the answer block by block and write runs/<slug>/layout.md, a row each: the heading or first six words, the component it becomes or "prose", and why in one clause.
+   A block that argues stays prose. A block that counts, ranks, schedules or names people to approach becomes a component. Full list and examples in render/COMPONENTS.md.
+3. APPLY. Edit ANSWER.md yourself, adding, moving and removing tag comment lines only. Change no word of the prose, no number, no heading and no badge, and leave no more than two callout blocks in a row.
+RETURN: the theme and the sentence behind it, how many blocks became components and how many stayed prose, and the ratios theme_check printed. Max 5 lines.
 ```
 
-Standard library only, seconds to run. `--strict` exits 1 on any problem, so the run does not ship while it fails.
+```
+You are the same kind of designer, meeting this page cold, and you judge how it looks rather than what it says.
+FIRST render it and look at it. Run `python3 <skill folder>/render/render.py runs/<slug>/ANSWER.md --theme runs/<slug>/theme.json`, then open runs/<slug>/report.html and screenshot it at 1100px wide and at 400px wide.
+With no browser in this session, say so in your first line and judge report.html and the tag census instead. Every rule in HOW TO WRITE applies.
+Report against this checklist, quoting the block you mean: plain paragraphs stacked into a wall inside a part; an ordered list whose numbers are typed into the sentence rather than hanging beside it; the ninety days reading as prose instead of a phased plan;
+callouts running one after another; a table overflowing at 400px; an accent unreadable on its own tint; anything above the call that delays it; a caption repeating what its heading already said.
+You have not seen the research, so you know nothing. You may NOT invent a fact: no number, company, date, price or claim that is not already on the page, and you may not rewrite the answer's words.
+You return a fix list the way the editor does, and every entry is a tag move, a tag removal, a block split or a theme change.
+OUTPUT, written to runs/<slug>/07_ux.md as H2 sections: WHAT THE PAGE LOOKS LIKE (one line per screenshot) / FIXES (numbered, each as FIX / BLOCK: the heading or first six words / WHY: one sentence / DO: the tag or theme change) /
+WHAT IS RIGHT AND MUST NOT BE TOUCHED / I INVENTED NOTHING (one line, or which entry broke the rule).
+```
 
-## Stage 8. Edit, then revise once
+The orchestrator applies that list to ANSWER.md and theme.json, tags and theme keys only. A fix may move the accent, so
+`python3 <skill folder>/tools/theme_check.py runs/<slug>/theme.json --strict` runs again here and has to exit 0 before the
+page is rendered once more. Then `python3 <skill folder>/tools/run_state.py done runs/<slug>/ design`, which wants all
+three of this stage's files, `theme.json`, `layout.md` and `07_ux.md`, so a UX peer that never ran shows up as a gap.
+
+## Stage 8. Lint
+
+```bash
+python3 <skill folder>/lint.py runs/<slug>/ANSWER.md --strict --json > runs/<slug>/lint.json
+python3 <skill folder>/tools/run_state.py done runs/<slug>/ lint
+```
+
+The exit code is the gate, not the file. `lint.json` only puts the counts on disk so the stage cannot be recorded on trust and
+so stage 9 has something to paste; drop `--json` and the redirect to read the same run in prose. Standard library only, seconds
+to run. It still counts the visible words and prints them, because a founder may want to know, but length is controlled by the
+filler check now and not by a budget.
+
+## Stage 9. Edit, then revise once
 
 ```
 You are an editor who has never seen this research. You are reading the answer cold.
@@ -401,8 +454,8 @@ rule in HOW TO WRITE.
 3. Is anything a conclusion pretending to be a fact?
 4. Would a person say this out loud, or does it read like a deck?
 5. Is the answer still there? Editing sands off the point, and the call must survive.
-6. Is a part over its word budget? The lint output names it. List the wordiest lines to cut, worst first, and
-   never cut a hedge, a source line or a badge to save words.
+6. Does a paragraph carry no figure, no source and no named thing? The lint output names those lines. List them to
+   cut, worst first, and never cut a hedge, a source line or a badge.
 You have not seen the research, so you know nothing. You may NOT invent a fact to fix a sentence: every replacement
 is built from words already on the page, or is a deletion, and never introduces a number, company, date, price or
 claim. Where a line is wrong and you cannot fix it from the page, mark it NEEDS A FACT and name the missing fact. Do
@@ -427,20 +480,24 @@ Apply the fixes in 06_edit.md to ANSWER.md. Nothing else. Zero searches. Every r
 Then say in one line: fixes applied, lines moved to Appendix C, fixes skipped, and why.
 ```
 
-Run the lint again, one round only, because two agents editing each other never converge. If `--strict` still fails,
-say so in chat rather than shipping quietly. A missing script means running its checks by reading, and saying so.
+Run the lint again, one round only, because two agents editing each other never converge. If `--strict` still fails, say so in
+chat rather than shipping quietly. A missing script means running its checks by reading, and saying so. Then
+`python3 <skill folder>/tools/run_state.py done runs/<slug>/ edit`.
 
-## Stage 9. Render
+## Stage 10. Render and hand over
 
 ```bash
-python3 <skill folder>/render/render.py runs/<slug>/ANSWER.md
+python3 <skill folder>/render/render.py runs/<slug>/ANSWER.md --theme runs/<slug>/theme.json
+python3 <skill folder>/tools/run_state.py done runs/<slug>/ render
 ```
 
-That writes `report.html`, one self-contained file with the CSS inlined. Publish it as an artifact if this session
-can, otherwise deliver the file. Zero tags reported means the writer skipped the tagging instruction, so send
-`ANSWER.md` back once; if it returns untagged, ship it as plain prose and say in chat that the components are
-missing. If the renderer cannot run, deliver `ANSWER.md` and say why. Then show the founder the answer and where
-the files are.
+That writes `report.html`, one self-contained file with the CSS inlined, and `ANSWER_clean.md`, the same content with every block
+tag and badge stripped. What the founder is handed is the page and `ANSWER_clean.md`, never `ANSWER.md`, because raw
+`<!--::meta-->` lines once reached him in the file he was given. Publish the page as an artifact if this session can, otherwise
+deliver both files. Zero tags reported means stage 7 applied none, so run stage 7 again once. If the second pass also reports
+zero, stop asking: ship the page as plain prose and say in chat that the components are missing. If the renderer cannot run at all,
+say why in chat and hand over `ANSWER.md` with its tag lines deleted by hand. Then show the founder the answer and where the files
+are.
 
 # Files
 
@@ -450,26 +507,24 @@ runs/<slug>/
 01_scout.md  exists, pays, what changed   04b_case_against.md  the case that it fails
 _findings.md running list, corrections    05_reconcile.md      both cases weighed, plus the two rating fields
 lanes/       one file per researcher      05c_checkback.md     looked-up facts, and which were decisive
-claims.jsonl every claim as data, read by the two scripts below   06_edit.md   what the editor sent back
+claims.jsonl every claim as data, read by the two scripts below   05d_challenge.md  the challenger on a close call
 claims_summary.md  sourced against guessed        contradictions.md  where two sources disagree
-verify_queue.md and verify.json  the check-back's rows   ANSWER.md  what the founder reads   report.html  the page
+verify_queue.md and verify.json  the check-back's rows   06_edit.md  what the editor sent back
+theme.json   the theme, accent and type          layout.md    which block becomes which component
+07_ux.md     the UX peer's fix list              lint.json    the strict lint's counts, written by the gate
+ANSWER.md    the tagged working copy             ANSWER_clean.md  the markdown the founder is handed
+report.html  the page                            _state.json and _state.md  which stages are done
 ```
-
-# Why it is built this way
-
-| Rule | Why |
-|---|---|
-| No option quota anywhere | A forced count raised fabricated citations by 7 to 11 points |
-| Two rating fields, never one | A blend hides whether the doubt sits in the evidence or in the view |
 
 # When it goes wrong
 
 | What you see | Why | Fix |
 |---|---|---|
 | Every idea comes back as no | Scout never asked what changed, or 4a was skipped | Rerun 4a, check Scout answered question 4 |
-| The answer reads like slogans | Stage 8 was skipped | Run stages 7 and 8 |
+| The page is paragraph after paragraph | Stage 7 was skipped, so almost nothing carries a tag | Run stage 7, then render again |
+| Raw `<!--::meta-->` text in the founder's file | `ANSWER.md` was handed over | Hand over `ANSWER_clean.md` from stage 10 |
 | A check-back fact never reached the answer | The revisable verdict rule was ignored | Rerun stage 6 with that fact at the top |
 | Numbers in the answer with no source | claims_summary.md was not read | Rerun stage 6 and require the badges |
-| A file says a source was blocked and stops | The ladder was ignored | Send it back once, naming the rungs |
 | No Indian sources anywhere | The brief named no place | Put the city or state in the brief, rerun stage 2 |
-| Lint reports BUDGET or TOTAL | Part 3 took nine items in 800 words | Editor check 6 names the cuts, revise once |
+| Lint reports FILLER | A paragraph carries no figure, no source and no named thing | Cut those paragraphs, revise once |
+| The answer reads like slogans | Stage 9 was skipped, so nobody rejected a sentence | Run stage 9, apply `06_edit.md`, lint again |

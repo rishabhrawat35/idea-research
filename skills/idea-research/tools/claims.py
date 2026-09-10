@@ -26,7 +26,8 @@ USAGE = "usage: python3 claims.py runs/<slug>/"
 # the files it was written from. Compared lowercase, so ANSWER.md and answer.md
 # are both recognised.
 GENERATED_NAMES = ("claims_summary.md", "contradictions.md", "verify_queue.md",
-                   "ANSWER.md", "_state.md")
+                   "ANSWER.md", "ANSWER_clean.md", "_state.md",
+                   "layout.md", "07_ux.md", "06_edit.md")
 GENERATED = {name.lower() for name in GENERATED_NAMES}
 
 URL_RE = re.compile(r"https?://[^\s<>)\]\"'|]+")

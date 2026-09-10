@@ -1,10 +1,24 @@
 #!/usr/bin/env python3
-"""Render a tagged markdown answer into one self-contained dark-theme HTML report.
+"""Render a tagged markdown answer into one self-contained HTML report.
 
-Usage:  python3 render.py runs/<slug>/ANSWER.md
+Usage:  python3 render.py runs/<slug>/ANSWER.md [--theme runs/<slug>/theme.json]
 
-Writes report.html next to the input, with report.css inlined so the file stands
-alone. Block tags are written in the markdown as HTML comments -- `<!--::verdict-->`
+Writes two files next to the input:
+  report.html       CSS inlined, no external request except a Google Fonts link
+                    when theme.json names a font family
+  ANSWER_clean.md   the same content with every block tag and badge stripped,
+                    which is the markdown a person is handed
+
+Without --theme the `clinical` theme is used, which is the palette report.css
+already carries. With it, the named theme from themes.py is substituted into the
+stylesheet's single :root block and theme.json's accent overrides the default
+accent. With no --theme flag at all the clinical theme is used and the run
+exits 0, because a run with no design stage never had a theme.json. A --theme
+that IS passed and cannot be read, holds invalid JSON, or names a theme that is
+not one of the four is a failure and exits 1, because a page whose accent no
+gate validated must not ship.
+
+Block tags are written in the markdown as HTML comments -- `<!--::verdict-->`
 -- so the markdown stays readable and valid anywhere else. A tag applies to the
 block that follows it. An untagged document renders as plain prose.
 
@@ -16,9 +30,13 @@ No JavaScript is emitted.
 """
 
 import html
+import json
 import os
 import re
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import themes  # noqa: E402  the four curated token sets
 
 try:
     import markdown
@@ -45,13 +63,18 @@ CALLOUTS = {
 CALLOUT_CLASS = {"warn": "warning"}
 
 # stat item:  "18,000 :: what a couple spends"   (em dash and " - " also accepted)
-STAT_SPLIT_RE = re.compile(r"\s*(?:::|—|\s-\s)\s*")
+# "\u2014" is written as an escape on purpose: no file in this build carries a
+# literal em dash, and the character is still accepted as a separator.
+STAT_SPLIT_RE = re.compile("\\s*(?:::|\u2014|\\s-\\s)\\s*")
 # metadata strip inside a finding:  "COST: 2,000 | EFFORT: 2 days"
 STRIP_RE = re.compile(r"^[A-Z][A-Za-z ]{1,18}:\s*[^|]+(\|\s*[A-Z][A-Za-z ]{1,18}:\s*[^|]+)*$")
 LIST_RE = re.compile(r"^\s*(?:[-*+]\s|\d+[.)]\s)")
+# field separator inside ::ranked, ::timeline and ::asks. Only "::", so a claim
+# may contain a hyphen or a dash without being cut in half.
+FIELD_RE = re.compile(r"\s*::\s*")
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.*)$")
 # a heading that already carries its own number: "00 . Title", "6. Title", "3 - Title"
-HEADNUM_RE = re.compile(r"^(\d+)\s*(?:[.)·–—:-]\s*)+")
+HEADNUM_RE = re.compile("^(\\d+)\\s*(?:[.)\u00b7\u2013\u2014:-]\\s*)+")
 BADGE_RE = re.compile(r"\[\[(?:(ok|warn|bad|flat):)?([^\]\n|]{1,40})\]\]")
 
 
@@ -517,8 +540,8 @@ def c_quote(lines, extra):
     body, attrib = [], extra
     for raw in lines:
         line = raw.strip()
-        if line.startswith(("—", "--", "-- ")) and len(body) > 0:
-            attrib = line.lstrip("—- ").strip()
+        if line.startswith(("\u2014", "--", "-- ")) and len(body) > 0:
+            attrib = line.lstrip("\u2014- ").strip()
         else:
             body.append(line)
     out = md_block("\n".join(body))
@@ -569,6 +592,123 @@ def c_figure(lines, extra):
     return out + "</figure>"
 
 
+def _items(lines):
+    """Split a block into [(first_line_fields, [continuation lines])].
+
+    A line that opens with a list marker starts an item. Any other line belongs
+    to the item above it, so a writer may put the long half on its own line.
+    """
+    out = []
+    for raw in lines:
+        if not raw.strip():
+            continue
+        if LIST_RE.match(raw) or not out:
+            body = re.sub(LIST_RE, "", raw).strip()
+            out.append([FIELD_RE.split(body), []])
+        else:
+            out[-1][1].append(raw.strip())
+    return out
+
+
+def c_ranked(lines, extra):
+    """::ranked  an ordered list where the order is the argument.
+
+    `claim :: why it ranks there`, or the why on the next line. The number is a
+    CSS counter reset at the PART heading, so a second ::ranked block in the
+    same part carries on from where the first one stopped.
+    """
+    items = []
+    for fields, extra_lines in _items(lines):
+        claim = fields[0].strip()
+        why = " ".join([f.strip() for f in fields[1:] if f.strip()] + extra_lines)
+        if not claim:
+            continue
+        row = '<p class="rank-claim">%s</p>' % md_inline(claim)
+        if why.strip():
+            row += '<p class="rank-why">%s</p>' % md_inline(why.strip())
+        items.append("<li>%s</li>" % row)
+    if not items:
+        return ""
+    return '<ol class="ranked">%s</ol>' % "".join(items)
+
+
+def c_timeline(lines, extra):
+    """::timeline  a phased plan.
+
+    `phase :: the item :: the number that means it worked`. Rows sharing a phase
+    label collapse into one node on the rule, so a horizon with two items reads
+    as one horizon rather than two.
+    """
+    rows = []
+    for fields, extra_lines in _items(lines):
+        fields = [f.strip() for f in fields] + ["", ""]
+        phase, item, metric = fields[0], fields[1], fields[2]
+        if extra_lines and not metric:
+            metric = " ".join(extra_lines)
+        elif extra_lines:
+            item = (item + " " + " ".join(extra_lines)).strip()
+        if not item and phase:  # a single field is the item, under the phase above
+            item, phase = phase, ""
+        if not item:
+            continue
+        if phase and rows and rows[-1][0] == phase:
+            phase = ""
+        rows.append((phase, item, metric))
+
+    phases, out = [], []
+    for phase, item, metric in rows:
+        if phase or not phases:
+            phases.append([phase, []])
+        phases[-1][1].append((item, metric))
+    for label, entries in phases:
+        cells = []
+        for item, metric in entries:
+            cell = '<span class="item">%s</span>' % md_inline(item)
+            if metric:
+                cell += '<span class="metric">%s</span>' % md_inline(metric)
+            cells.append("<li>%s</li>" % cell)
+        out.append(
+            '<div class="phase"><p class="phase-label">%s</p>'
+            '<ul class="phase-items">%s</ul></div>'
+            % (md_inline(label) if label else "", "".join(cells))
+        )
+    if not out:
+        return ""
+    return '<div class="timeline">%s</div>' % "".join(out)
+
+
+def c_asks(lines, extra):
+    """::asks  the people to approach.
+
+    `name :: why them :: question | question`, or one question per following
+    line. Each question becomes its own ruled row, which is what stops a card
+    of three questions from reading as a paragraph.
+    """
+    cards = []
+    for fields, extra_lines in _items(lines):
+        fields = [f.strip() for f in fields]
+        who = fields[0]
+        why = fields[1] if len(fields) > 1 else ""
+        questions = []
+        for chunk in fields[2:] + extra_lines:
+            for part in chunk.split("|"):
+                part = part.strip()
+                if part:
+                    questions.append(part)
+        if not who:
+            continue
+        card = '<div class="who">%s</div>' % md_inline(who)
+        if why:
+            card += '<div class="why">%s</div>' % md_inline(why)
+        if questions:
+            card += '<ul class="qs">%s</ul>' % "".join(
+                "<li>%s</li>" % md_inline(q) for q in questions)
+        cards.append('<div class="ask">%s</div>' % card)
+    if not cards:
+        return ""
+    return '<div class="asks">%s</div>' % "".join(cards)
+
+
 def c_meta(lines, extra):
     bits = []
     fields = []
@@ -584,6 +724,137 @@ def c_meta(lines, extra):
         else:
             bits.append("<span>%s</span>" % md_inline(line))
     return '<div class="meta-header">%s</div>' % "".join(bits)
+
+
+# ---------------------------------------------------------------- theme
+
+def wrong_shape(path, want="file"):
+    """Return one line naming a path of the wrong shape, or "" when it is fine.
+
+    Every other script in this pipeline takes runs/<slug>/, so handing this one
+    the run directory is the ordinary typo. os.path.exists is true for a
+    directory, which is how that typo used to reach open() and raise
+    IsADirectoryError with a traceback.
+    """
+    if want == "file":
+        if os.path.isdir(path):
+            return ("%s is a directory, not a file. render takes the markdown "
+                    "file inside the run: %s"
+                    % (path, os.path.join(path, "ANSWER.md")))
+        if not os.path.isfile(path):
+            return "no such file: %s" % path
+        return ""
+    if os.path.isfile(path):
+        return ("%s is a file, not a directory. Pass the directory that holds "
+                "it: %s" % (path, os.path.dirname(os.path.abspath(path)) or "."))
+    if not os.path.isdir(path):
+        return "no such directory: %s" % path
+    return ""
+
+
+HEX_RE = re.compile(r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
+ROOT_RE = re.compile(r":root\s*\{.*?\n\}", re.S)
+
+
+def load_theme(path):
+    """Read theme.json. Return (spec, notes, fatal). Never raises, never crashes.
+
+    spec keys: theme, accent, display, body, density. notes are lines for stdout
+    explaining any fallback that is still safe, because a silent fallback is how
+    a page ships in the wrong palette. Unknown keys in the file are ignored
+    rather than failing.
+
+    fatal is None, or one line saying why the theme could not be trusted. It is
+    only ever set when a --theme path was passed, and the caller turns it into
+    exit 1: a theme.json that was asked for and could not be read is a mistyped
+    path, and falling back to clinical there ships an accent no gate measured.
+    No --theme at all is not an error, it is the documented default.
+    """
+    spec = {"theme": themes.DEFAULT_THEME, "accent": None,
+            "display": None, "body": None, "density": "regular"}
+    notes = []
+    if not path:
+        return spec, notes, None
+    shape = wrong_shape(path, "file")
+    if shape:
+        if os.path.isdir(path):
+            return spec, notes, ("--theme %s is a directory, not a file. Pass "
+                                 "the theme.json inside it: %s"
+                                 % (path, os.path.join(path, "theme.json")))
+        return spec, notes, ("--theme %s does not exist, so no theme was "
+                             "validated" % path)
+    try:
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+    except (IOError, OSError) as err:
+        return spec, notes, ("--theme %s could not be read (%s), so no theme "
+                             "was validated" % (path, err))
+    except ValueError as err:
+        return spec, notes, ("--theme %s is not valid JSON (%s), so no theme "
+                             "was validated" % (path, err))
+    if not isinstance(data, dict):
+        return spec, notes, ("--theme %s must hold a JSON object, so no theme "
+                             "was validated" % path)
+
+    name = str(data.get("theme", "") or "").strip().lower()
+    if name in themes.THEMES:
+        spec["theme"] = name
+    elif name:
+        return spec, notes, ('--theme %s names "%s", which is not one of: %s'
+                             % (path, name, ", ".join(sorted(themes.THEMES))))
+    else:
+        return spec, notes, ("--theme %s names no theme. It needs a \"theme\" "
+                             "key holding one of: %s"
+                             % (path, ", ".join(sorted(themes.THEMES))))
+
+    accent = str(data.get("accent", "") or "").strip()
+    if accent and HEX_RE.match(accent):
+        spec["accent"] = accent
+    elif accent:
+        notes.append('theme.json accent "%s" is not a hex colour, '
+                     "using the theme's own accent" % accent)
+
+    typ = data.get("type")
+    if isinstance(typ, dict):
+        spec["display"] = str(typ.get("display", "") or "").strip() or None
+        spec["body"] = str(typ.get("body", "") or "").strip() or None
+    density = str(data.get("density", "") or "").strip().lower()
+    if density in ("compact", "regular"):
+        spec["density"] = density
+    return spec, notes, None
+
+
+def apply_theme(css, spec):
+    """Substitute one token set into the stylesheet's single :root block.
+
+    There is one stylesheet, not four. report.css ships with the clinical set
+    inline so it is readable and testable on its own, and this replaces those
+    declarations at build time.
+    """
+    root = ROOT_RE.search(css)
+    if not root:
+        return css
+    block = ":root {\n%s\n}" % themes.css_root(
+        spec["theme"], spec.get("accent"), spec.get("body"), spec.get("display"))
+    return css[:root.start()] + block + css[root.end():]
+
+
+def font_link(spec):
+    """The one external reference the page is allowed, and only when asked for."""
+    families = []
+    for key in ("body", "display"):
+        family = (spec.get(key) or "").strip()
+        if (family and family.lower() != "system"
+                and re.fullmatch(r"[A-Za-z0-9 ]{2,40}", family)
+                and family not in families):
+            families.append(family)
+    if not families:
+        return ""
+    query = "&amp;".join(
+        "family=%s:ital,wght@0,400;0,600;0,700;1,400" % f.replace(" ", "+")
+        for f in families)
+    return ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
+            '%s&amp;display=swap">\n' % query)
 
 
 # ---------------------------------------------------------------- main render
@@ -635,6 +906,12 @@ def render_block(tag, extra, lines, state):
         return c_steps(lines, extra), "block"
     if tag == "cards":
         return c_cards(lines, extra), "block"
+    if tag == "ranked":
+        return c_ranked(lines, extra), "block"
+    if tag == "timeline":
+        return c_timeline(lines, extra), "block"
+    if tag == "asks":
+        return c_asks(lines, extra), "block"
     if tag == "figure":
         return c_figure(lines, extra), "block"
     if tag == "meta":
@@ -663,7 +940,8 @@ def wrap_findings(parts):
     return out
 
 
-def render(src_text):
+def render(src_text, spec=None):
+    spec = spec or {"theme": themes.DEFAULT_THEME}
     state = {"title": "Report", "first_h2_num": None, "after_heading": False}
     blocks = read_blocks(src_text)
 
@@ -728,16 +1006,76 @@ def render(src_text):
     if os.path.exists(CSS_PATH):
         with open(CSS_PATH, encoding="utf-8") as fh:
             css = fh.read()
+    css = apply_theme(css, spec)
 
-    zero = " zero-based" if state["first_h2_num"] == 0 else ""
+    classes = "report"
+    if state["first_h2_num"] == 0:
+        classes += " zero-based"
+    if spec.get("density") == "compact":
+        classes += " compact"
     return (
         "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n"
         '<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        "<title>%s</title>\n<style>\n%s</style>\n</head>\n<body>\n"
-        '<main class="report%s">\n%s\n</main>\n</body>\n</html>\n'
-        % (html.escape(state["title"]), css, zero, body)
+        "<title>%s</title>\n%s<style>\n%s</style>\n</head>\n<body>\n"
+        '<main class="%s">\n%s\n</main>\n</body>\n</html>\n'
+        % (html.escape(state["title"]), font_link(spec), css, classes, body)
     )
+
+
+# ------------------------------------------------------------- clean markdown
+
+# A badge carries meaning, so it must not vanish. `[[warn:Thin]]` becomes
+# "(status: Thin)": the writer's own word survives, nothing is invented, and a
+# reader who never saw the engine still understands it is a marker on the claim.
+def clean_badge(match):
+    return "(status: %s)" % match.group(2).strip()
+
+
+def clean_markdown(src_text):
+    """The same answer with every block tag and badge gone.
+
+    This is the file a person is handed, so it must contain no engine syntax at
+    all: no `<!--` comment, no `[[badge]]`, and no `::` field separator. A tag's
+    label after the pipe does carry meaning, so it is promoted to a bold lead-in
+    line rather than dropped, except on a tag that sits above a heading.
+    """
+    lines = src_text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    out = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        m = TAG_RE.match(line)
+        if m:
+            tag = m.group(1).lower()
+            label = (m.group(2) or "").strip()
+            j = i + 1
+            while j < len(lines) and not lines[j].strip():
+                j += 1
+            follows_heading = bool(j < len(lines) and HEADING_RE.match(lines[j]))
+            if label and tag != "appendix" and not follows_heading:
+                out.append("**%s**" % label)
+                out.append("")
+            i += 1
+            continue
+        if ANY_COMMENT_RE.match(line):
+            i += 1
+            continue
+        out.append(line)
+        i += 1
+
+    text = "\n".join(out)
+    text = re.sub(r"<!--.*?-->", "", text, flags=re.S)     # any inline comment
+    text = BADGE_RE.sub(clean_badge, text)                  # [[warn:Thin]]
+    text = re.sub(r"[ \t]*::[ \t]*", " - ", text)           # component fields
+    text = re.sub(r"^ +- ", "- ", text, flags=re.M)
+    # inside a list item a pipe separated two questions, and the question marks
+    # already separate them. A table row starts with "|", so it is untouched.
+    text = re.sub(r"^(\s*[-*+] .*)$",
+                  lambda m: re.sub(r"[ \t]*\|[ \t]*", " ", m.group(1)),
+                  text, flags=re.M)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip() + "\n"
 
 
 def count_tags(src_text):
@@ -750,25 +1088,75 @@ def count_tags(src_text):
 
 
 def main(argv):
-    if len(argv) != 2:
+    args, src, theme_path = argv[1:], None, None
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg == "--theme":
+            i += 1
+            if i >= len(args):
+                sys.stderr.write("--theme needs a path to theme.json\n")
+                return 2
+            theme_path = args[i]
+        elif arg.startswith("--theme="):
+            theme_path = arg.split("=", 1)[1]
+        elif arg in ("-h", "--help"):
+            print(__doc__.strip())
+            return 0
+        elif arg.startswith("-"):
+            sys.stderr.write("unknown option: %s\n" % arg)
+            return 2
+        elif src is None:
+            src = arg
+        else:
+            sys.stderr.write("too many arguments: %s\n" % arg)
+            return 2
+        i += 1
+    if src is None:
         print(__doc__.strip())
         return 2
-    src = os.path.abspath(argv[1])
-    if not os.path.exists(src):
-        sys.stderr.write("no such file: %s\n" % src)
+
+    src = os.path.abspath(src)
+    shape = wrong_shape(src, "file")
+    if shape:
+        sys.stderr.write("render: " + shape + "\n")
         return 1
     with open(src, encoding="utf-8") as fh:
         text = fh.read()
-    out_path = os.path.join(os.path.dirname(src), "report.html")
-    out = render(text)
-    with open(out_path, "w", encoding="utf-8") as fh:
-        fh.write(out)
-    tags = count_tags(text)
-    print("wrote %s (%d bytes)" % (out_path, len(out.encode("utf-8"))))
+
+    spec, notes, fatal = load_theme(theme_path)
+    if fatal:
+        sys.stderr.write("render: " + fatal + "\n")
+        sys.stderr.write("render: nothing was written. Fix the path or drop "
+                         "--theme to render on the %s theme.\n"
+                         % themes.DEFAULT_THEME)
+        return 1
+    for note in notes:
+        print(note)
+
+    out_dir = os.path.dirname(src)
+    html_path = os.path.join(out_dir, "report.html")
+    clean_path = os.path.join(out_dir, "ANSWER_clean.md")
+    page = render(text, spec)
+    with open(html_path, "w", encoding="utf-8") as fh:
+        fh.write(page)
+    clean = clean_markdown(text)
+    with open(clean_path, "w", encoding="utf-8") as fh:
+        fh.write(clean)
+
+    tokens = themes.get_theme(spec["theme"], spec.get("accent"))
+    print("theme: %s (%s ground), accent %s, density %s"
+          % (spec["theme"], themes.GROUND[spec["theme"]], tokens["accent"],
+             spec.get("density", "regular")))
+    fonts = [f for f in (spec.get("body"), spec.get("display")) if f]
+    print("fonts: %s" % (", ".join(fonts) if fonts else "system stack only"))
+    print("wrote %s (%d bytes)" % (html_path, len(page.encode("utf-8"))))
+    print("wrote %s (%d bytes)" % (clean_path, len(clean.encode("utf-8"))))
     if markdown is None:
         print("note: the markdown package is not installed, so the built-in "
               "converter was used (headings, bold, italic, code, links, lists, "
               "tables, fences). For the full parser: python3 -m pip install markdown")
+    tags = count_tags(text)
     if tags:
         print("tags found: " + ", ".join("%s x%d" % (k, v) for k, v in sorted(tags.items())))
     else:

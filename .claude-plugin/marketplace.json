@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "idea-research",
-      "description": "Two agents build the strongest case for and against the same idea, a reconciler weighs them, scripts audit every figure, and the answer says what the evidence supports.",
+      "description": "Two agents build the strongest case for and against the same idea, a reconciler weighs them, scripts audit every figure and gate every stage, and the answer is composed rather than dumped.",
       "source": "./",
       "category": "research"
     }
