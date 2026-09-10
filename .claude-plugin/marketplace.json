@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "idea-research",
-      "description": "Researcher-versus-challenger agent pairs that pressure-test a startup idea and return a BUILD/RESHAPE/KILL memo.",
+      "description": "Two agents build the strongest case for and against the same idea, a reconciler weighs them, scripts audit every figure, and the answer says what the evidence supports.",
       "source": "./",
       "category": "research"
     }
