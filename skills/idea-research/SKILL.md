@@ -9,7 +9,7 @@ metadata:
 
 # Idea Research
 
-**Version 6.1.1** · keep this in step with `.claude-plugin/plugin.json`, the only version the desktop app shows. Bump both on every change: patch for wording, minor for a new rule or stage, major for a pipeline change.
+**Version 6.2.0** · keep this in step with `.claude-plugin/plugin.json`, the only version the desktop app shows. Bump both on every change: patch for wording, minor for a new rule or stage, major for a pipeline change.
 
 Check whether an idea is worth building. The market is India by default and money is in ₹. The reader is a founder with no money, no team and no network, reading on a phone at 11pm. The job is to find out what is
 true. Use it for "is this worth building", "should I build X", "is there a gap here", "would anyone fund this in India". Do not use it for a pitch deck, a financial model, a market-size lookup, or a company that
@@ -53,6 +53,27 @@ The system's own vocabulary never reaches the founder: no lane, no verdict tag, 
 11. **Table cells run to 15 words, preferably five.** No cell that is only a hedge, no column full of paragraphs.
 12. **Headings state the finding, not the topic,** and read correctly with the section covered up. Front-load the words that carry meaning: "If the numbers are wrong" becomes "The case holds if conversion falls by a
     third, and breaks if it halves"; "Why nobody is doing this" becomes "Three companies tried and stopped, for a reason that no longer applies".
+13. **No AI tell survives a judgment read.** One that a careful writer might have chosen counts only where several share a paragraph. Read the
+    whole paragraph, then cut:
+    - the run-up that announces the point instead of making it
+    - the argument with nobody who made it
+    - the triad that arrives because three sounds complete
+    - the qualifier that sits on a qualifier
+    - the hyphenated pair kept after its noun
+    - the passive that hides who acts
+    - "associated with" standing in for the real relationship
+    - the -ing rider that hangs off a fact
+    - the sales sentence
+    - the unnamed expert propping up a claim
+    - the send-off that promises a future instead of the last concrete fact
+    - the line describing what an earlier draft said
+    - the bold label carrying nothing the item under it does not
+
+    The word list and the fixed constructions are in `lint.py`, as the AIWORD, INFLATED, COPULA, NOTXBUTY, RESIDUE, DASH, CURLY, OPENER and
+    HEADECHO checks.
+
+Rule 13 and those nine checks come from blader/humanizer v3.0.0, MIT. Its patterns come from Wikipedia's "Signs of AI writing", maintained by
+WikiProject AI Cleanup, and from reviews of AI-generated text on Wikipedia and elsewhere.
 
 # NEVER STOP AT A BLOCKED SOURCE
 
@@ -468,6 +489,8 @@ rule in HOW TO WRITE.
 5. Is the answer still there? Editing sands off the point, and the call must survive.
 6. Does a paragraph carry no figure, no source and no named thing? The lint output names those lines. List them to
    cut, worst first, and never cut a hedge, a source line or a badge.
+7. Does a judgment tell survive? Rule 13 lists the thirteen. Name a passage only where several sit together, because one alone
+   is often deliberate.
 You have not seen the research, so you know nothing. You may NOT invent a fact to fix a sentence: every replacement
 is built from words already on the page, or is a deletion, and never introduces a number, company, date, price or
 claim. Where a line is wrong and you cannot fix it from the page, mark it NEEDS A FACT and name the missing fact. Do

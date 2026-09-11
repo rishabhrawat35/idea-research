@@ -1,6 +1,6 @@
 {
   "name": "idea-research",
-  "version": "6.1.1",
+  "version": "6.2.0",
   "description": "Checks whether a startup idea is worth building. Two agents argue the case for and against from the same research, a reconciler weighs them, a design agent chooses the page's structure and palette from the idea's own domain, and three scripts gate the run. India-first, plain English, state on disk.",
   "author": {
     "name": "Rishabh Rawat",

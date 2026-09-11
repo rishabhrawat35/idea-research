@@ -41,11 +41,14 @@ TOTAL_BUDGET = 2000
 # Both numbers above are REPORTED, never fatal. The founder decided there is no word cap
 # on content that carries data, so length is controlled by FILLER instead: a paragraph
 # that carries nothing is cut, and a long section that carries figures stays.
-ADVISORY = {"BUDGET", "TOTAL"}
+# CURLY joins them, because humanizer marks curly quotes weak alone: most editors
+# auto-curl, so the character is evidence of an editor and not of a machine.
+ADVISORY = {"BUDGET", "CURLY", "TOTAL"}
 # Every check this script can emit, so --json names them all whether or not one fired.
-CHECKS = ("BANNED", "BUDGET", "CALLOUT_RUN", "CELL", "FILLER", "FRAGMENT", "HEADING",
-          "HEADING_NUMBER", "HEDGE", "INTERNAL", "JARGON", "LONG", "PARA", "PROSE_WALL",
-          "QUOTE", "REPEAT", "TAG_ORPHAN", "TOTAL", "UNSOURCED")
+CHECKS = ("AIWORD", "BANNED", "BUDGET", "CALLOUT_RUN", "CELL", "COPULA", "CURLY", "DASH",
+          "FILLER", "FRAGMENT", "HEADECHO", "HEADING", "HEADING_NUMBER", "HEDGE",
+          "INFLATED", "INTERNAL", "JARGON", "LONG", "NOTXBUTY", "OPENER", "PARA",
+          "PROSE_WALL", "QUOTE", "REPEAT", "RESIDUE", "TAG_ORPHAN", "TOTAL", "UNSOURCED")
 
 # Composition limits. Two callouts in a row read as emphasis; three read as a wall of
 # boxes with no page between them. Three plain paragraphs read as prose; four read as an
@@ -240,6 +243,282 @@ FILLER_HONEST = re.compile(
 # on the three real answers no paragraph FILLER reads depends on this signal at all.
 FILLER_DEFINE = re.compile(r"\bthe difference between\b|\bcounts as\b"
                            r"|\bnot the same (?:as|thing|question)\b|\b(?:is|are) defined as\b", re.I)
+
+# ---------------------------------------------------------------------------
+# The nine checks below come from blader/humanizer v3.0.0, MIT. Its 25 patterns
+# come from Wikipedia's "Signs of AI writing", maintained by WikiProject AI
+# Cleanup, and from reviews of AI-generated text on Wikipedia and elsewhere.
+# Only the mechanical half is here: a fixed construction, a lexicon, a
+# character class, a count. The judgement half stays in stage 9's prompt and in
+# SKILL.md rule 13, because no script can see whether a triad has three real
+# items or whether a passive sentence hides an actor worth naming, and a check
+# that guessed at those would fail the sentences the writer meant.
+# ---------------------------------------------------------------------------
+def mask_prose(line):
+    """The line with everything that is not the writer's prose removed.
+
+    Inline code, a URL, a link or image target, a reference-style definition
+    and an HTML tag are not prose. The hyphen in `--theme`, in
+    `render/COMPONENTS.md` and in a source URL belongs to the flag, the path
+    or the URL, so DASH must not read it as a dash. A word inside a URL is the
+    site's and not the writer's, so AIWORD does not read one either, which is
+    why the path of a Wikipedia article named "Vibrant" is not an AI word. A
+    curly apostrophe inside inline code is the code's. Link and image alt text
+    stay, because the writer wrote those. Every humanizer check reads the
+    masked line, so the nine agree on what counts as prose; this is the same
+    exemption BANNED and JARGON already take by other means.
+    """
+    s = re.sub(r"`[^`]*`", " ", line)
+    s = re.sub(r"<?https?://\S+>?", " ", s)
+    s = re.sub(r"^\s{0,3}\[[^\]]+\]:\s*\S+.*$", " ", s)
+    s = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", s)
+    s = re.sub(r"<[^>]+>", " ", s)
+    return s
+
+def _phrase_re(items):
+    """One alternation, longest phrase first, so "enduring legacy" wins over
+    "enduring" and one phrase is reported once instead of twice."""
+    return re.compile(r"(?<![\w-])(?:%s)(?![\w-])"
+                      % "|".join(re.escape(s) for s in sorted(items, key=len, reverse=True)),
+                      re.I)
+
+# humanizer 12, plus the single words from 15 and 16. Nine candidates were left
+# out, each one for a phrase this repository already writes. "landscape",
+# "robust" and "delve" are in BANNED above, so listing them here would report
+# one word twice. "gate", "gated" and "gating" are technical in this system:
+# SKILL.md's own "Three gates, a hard rule" and this file's "The checks gate
+# composition" are the pipeline naming its own machinery. "key" is the same
+# case, since lint.py reads a "Key: value" block and render/themes.py takes a
+# theme key. "actually" sits inside the banned table's own instruction, "say
+# what it actually is", and in pregnancy-pal's heading "Would people actually
+# pay". "quietly" is the word SKILL.md uses for a stage that fails without
+# saying so. "highlight" and "refers to" are scoped by humanizer to one sense
+# each, the verb and the definition, and a lexicon cannot tell that sense from
+# the ordinary one in "the page it refers to". "boasts" is not here either: it
+# is a COPULA phrase, which is where the repair is named, and one word in two
+# lexicons of one file is a defect even when the running order hides it.
+#
+# Every inflection is spelled out as a literal rather than generated, because
+# grwrepo/lint.py holds the same list and the two must agree by inspection.
+# The flat list was the bug: "The 2019 launch enhanced retention, showcased the
+# funnel, fostered demand and emphasized the gap" held four of these words and
+# lit nothing, because only "enhance", "showcase", "fostering" and "emphasizing"
+# were listed.
+AIWORD = """additionally bolster bolstered bolsters breathtaking crucial crucially emphasize
+emphasized emphasizes emphasizing enduring enhance enhanced enhances enhancing exemplifies
+exemplify foster fostered fostering fosters garner garnered garners groundbreaking interplay
+intricacies intricate meticulous meticulously must-visit nestled pivotal profound renowned
+showcase showcased showcases showcasing stunning symbolizing tapestry testament underscore
+underscored underscores underscoring valuable vibrant""".split() + [
+    "align with", "commitment to", "deep dive", "diverse array", "in the heart of",
+    "natural beauty"]
+AIWORD_RE = _phrase_re(AIWORD)
+# humanizer 13, plus the guess half of 23. The disclaimer half of 23 is left
+# out on purpose: SKILL.md requires the words "the research did not find this"
+# and "we're guessing here", so a check on disclaimers would fail the honest
+# marking the template asks for.
+# humanizer's phrase is "marking or shaping the", so "marking the" and
+# "shaping the" are here and the bare "marking a" is not: it fired on "a box
+# marking a lead as qualified", where the word is doing ordinary work.
+# "appears to have been" is gone too. It is not on humanizer 23's list, and
+# SKILL.md rule 7 mandates that shape of hedge, so a check on it failed the
+# honest marking the template asks for.
+INFLATED = ["stands as a testament", "a pivotal moment", "a crucial moment",
+            "plays a key role", "marking the", "shaping the",
+            "underscores its importance",
+            "reflects a broader", "enduring legacy", "lasting legacy",
+            "setting the stage for", "evolving landscape", "indelible mark",
+            "continues to thrive", "the future looks bright", "exciting times ahead",
+            "a step in the right direction", "it is believed that"]
+INFLATED_RE = _phrase_re(INFLATED)
+# humanizer 18. "boasts" lands here and only here, because this message names
+# the repair and humanizer_words gives each phrase to one check anyway.
+COPULA = ["serves as", "stands as", "functions as", "operates as", "represents a",
+          "boasts", "features a", "offers a", "maintains a"]
+COPULA_RE = _phrase_re(COPULA)
+# humanizer 22, the leftovers. "Of course" and "Certainly" carry their
+# exclamation mark: without it both are ordinary English. "here is a" and
+# "would you like" are anchored to the start of a line for the same reason.
+# Mid-sentence they are ordinary too: "Every cap here is a ceiling" is this
+# skill's own prose, and "Would you like a refund" is exactly the customer
+# question an ::asks block is for. Only the line that opens on one is wrapper.
+RESIDUE = [(re.compile(r"\bgreat question\b", re.I), "Great question"),
+           (re.compile(r"\bi hope this helps\b", re.I), "I hope this helps"),
+           (re.compile(r"\bof course\s*!", re.I), "Of course!"),
+           (re.compile(r"\bcertainly\s*!", re.I), "Certainly!"),
+           (re.compile(u"\\byou(?:['’]?re| are) absolutely right\\b", re.I),
+            "You're absolutely right"),
+           (re.compile(r"^\s*would you like\b", re.I), "Would you like"),
+           (re.compile(r"\bwant me to\b", re.I), "Want me to"),
+           (re.compile(r"\bshould i continue\b", re.I), "Should I continue"),
+           (re.compile(r"\blet me know\b", re.I), "let me know"),
+           (re.compile(r"^\s*here is a\b", re.I), "here is a")]
+# humanizer 1. The bare "not X but Y" is NOT here. The verdict line SKILL.md
+# asks for is written that way, "Not this version, but a lab-paid version might
+# work", and conceive-planner shipped it, so a check on the bare form would
+# fail the template's own sentence. What is here is the staged form, where
+# "just", "only" or "merely" fences off the negative half, and the reversed
+# "it is not X, it is Y".
+NOTXBUTY_FORMS = (
+    (re.compile(u"\\bnot (?:just|only|merely|simply)\\b[^.!?]{1,80}?[,;]?\\s*"
+                u"\\b(?:but|it['’]?s|it is)\\b", re.I),
+     u'a staged "not just X, it is Y" contrast'),
+    (re.compile(u"\\bit(?:['’]s| is) not\\b[^.!?]{1,80}?,\\s*it(?:['’]s| is)\\b", re.I),
+     u'an "it is not X, it is Y" contrast'))
+# There is no check on the clipped tail, "..., no guessing". Even anchored at
+# the end of a sentence it read "One agent, no research." and "Forty clinics
+# replied, no doubt." as contrasts, and both are plain English carrying a
+# figure. It is the weakest form of the pattern, so the editor owns it.
+# The split contrast is "This does not mean X. It means Y." The bare "This is
+# not ..." is gone: that is how a non-goals section opens, and the sentence
+# after it is the point rather than the second half of a staged pair.
+NOTXBUTY_OPEN = re.compile(u"^(?:this does not mean|this doesn['’]?t mean)\\b", re.I)
+NOTXBUTY_SHUT = re.compile(u"^(?:it means|it is|it['’]s)\\b", re.I)
+# humanizer 8. The answer template already forbids em dashes in prose; this
+# makes it mechanical. A code fence is skipped by the caller, and inline code,
+# a URL, a markdown link target and a file path are masked here, because a
+# hyphen inside one of those belongs to the path and not to the writer.
+DASH_MASK = re.compile(r"`[^`]*`|https?://\S+|\]\([^)]*\)|(?<!\w)[\w.~]+/[\w./~-]+")
+# An en dash between two figures is a range, "700-1,800" written with one, and
+# ranges are the one job a comma cannot do. ttc-planner's source tables hold 25
+# of them and every one is deliberate, so they are masked too: humanizer 8 is
+# about the dash used instead of choosing how two clauses relate.
+DASH_RANGE = re.compile(u"(?<=\\d)\\s?–\\s?(?=[₹$\\d])")
+DASH_FORMS = ((u"—", "an em dash"), (u"–", "an en dash"),
+              (" -- ", "a spaced double hyphen"))
+# humanizer 21, advisory. Most editors auto-curl, so the character is evidence
+# of an editor and not of a machine.
+CURLY_CHARS = u"“”‘’"
+# humanizer 7. Two sentences opening on the same word is ordinary English, and
+# humanizer says so itself ("She came. She saw. She conquered."); three is the
+# rule writing instead of the ear. Except when the repeated word is a function
+# word, which is why that sanctioned example sits at exactly three and must
+# stay quiet: humanizer 7 says do not ban the repeated word, and "The", "It",
+# "She" and "This" are how English starts a sentence about the thing already
+# named. "The market... The reader... The job..." is this skill's own opening.
+# So an opener in OPENER_STOP ends the run without reporting it, and what is
+# left is three sentences opening on the same content word, which is the tell.
+OPENER_MIN = 3
+OPENER_STOP = CAP_STOP | set(AUX)
+FIRST_WORD = re.compile(u"[A-Za-z][A-Za-z'’-]*")
+# humanizer 24. Compared on content words, never on the whole string: a heading
+# and the sentence under it share their function words whatever either says, so
+# a string comparison would have called every opening sentence an echo. One new
+# content word is allowed, because "The lab route pays less" under "The lab
+# route pays less than the plan assumed" is the tell and one added noun is not.
+HEADECHO_MAX_WORDS, HEADECHO_NEW = 12, 1
+HEADECHO_STOP = CAP_STOP | set(AUX)
+
+# A run of digits is a content word too, and the most load-bearing one this
+# skill writes. Rule 8 says numbers beat adjectives, so "Three companies tried
+# and stopped in 2021." under the heading "Three companies tried and stopped"
+# adds the only thing the heading left out, and a letters-only match called it
+# an echo of its own heading.
+CONTENT_WORD = re.compile(u"[A-Za-z][A-Za-z'’-]*|\\d[\\d.,%₹]*")
+
+def content_words(text):
+    """The words of a heading or a sentence that carry its subject."""
+    out = set()
+    for w in CONTENT_WORD.findall(text.lower()):
+        if w[0].isdigit():
+            out.add(w.rstrip(u".,"))
+            continue
+        w = w.strip(u"'’-")
+        if len(w) < 3 or w in HEADECHO_STOP:
+            continue
+        out.add(w[:-1] if len(w) > 3 and w.endswith("s") else w)
+    return out
+
+def humanizer_words(line):
+    """INFLATED, COPULA and AIWORD on one line, each phrase reported once.
+
+    The order and the claimed spans are the whole point. "stands as a
+    testament" holds a COPULA phrase and an AIWORD inside it, and reporting one
+    phrase three times tells the writer nothing the first report did not.
+    """
+    out, taken = [], []
+    for kind, rx, msg in (
+            ("INFLATED", INFLATED_RE,
+             '"%s" - inflated significance: keep the fact and drop the dressing'),
+            ("COPULA", COPULA_RE, '"%s" - write is, are or has'),
+            ("AIWORD", AIWORD_RE,
+             '"%s" - models reach for this word far more often than people do')):
+        for m in rx.finditer(line):
+            if any(m.start() < b and a < m.end() for a, b in taken):
+                continue
+            out.append((kind, msg % m.group(0)))
+            taken.append((m.start(), m.end()))
+    return out
+
+def humanizer_line(line):
+    """The line-scale humanizer checks, as (kind, message) pairs.
+
+    Every one of these reads a line rather than a paragraph, because the bold
+    claim the template mandates under a ::finding tag never enters a paragraph
+    and neither does a table cell, and those are the two places a contrast or a
+    dash is most likely to be written.
+
+    mask_prose runs FIRST and every check below reads its result, so all nine
+    agree on what is the writer's prose. Only DASH used to mask, so an AI word
+    in a URL path, a curly apostrophe in inline code and a contrast inside a
+    sourced quotation were reported against a writer who wrote none of them.
+    """
+    line = mask_prose(line)
+    out, bare, taken = [], line.replace("*", ""), []
+    for rx, what in NOTXBUTY_FORMS:
+        for m in rx.finditer(bare):
+            if any(m.start() < b and a < m.end() for a, b in taken):
+                continue
+            out.append(("NOTXBUTY", "%s: state the point directly" % what))
+            taken.append((m.start(), m.end()))
+    out.extend(humanizer_words(line))
+    for rx, phrase in RESIDUE:
+        if rx.search(line):
+            out.append(("RESIDUE", '"%s" is chat wrapper, not an answer: delete it' % phrase))
+    masked = DASH_RANGE.sub(" ", DASH_MASK.sub(" ", line))
+    for ch, what in DASH_FORMS:
+        if ch in masked:
+            out.append(("DASH", "%s: use a comma, a colon, a full stop or brackets" % what))
+    curly = sum(line.count(c) for c in CURLY_CHARS)
+    if curly:
+        out.append(("CURLY", "curly quotation marks or apostrophes (%d on this line): "
+                    "this answer is read as plain text, so write the straight ones" % curly))
+    return out
+
+def humanizer_para(sents, head_words, opener=True):
+    """The paragraph-scale humanizer checks, as (kind, message) pairs."""
+    out = []
+    for a, b in zip(sents, sents[1:]):
+        if NOTXBUTY_OPEN.match(a) and NOTXBUTY_SHUT.match(b):
+            out.append(("NOTXBUTY", 'contrast split across two sentences, "%s" then "%s": '
+                        "state the point directly" % (a[:34], b[:26])))
+    word, run = None, 0
+    for s in (sents + [""]) if opener else []:
+        m = FIRST_WORD.search(s.replace("*", ""))
+        w = m.group(0).lower() if m else None
+        # A function-word opener ends the run without being one: see OPENER_STOP.
+        if w in OPENER_STOP:
+            w = None
+        if w is not None and w == word:
+            run += 1
+            continue
+        if run >= OPENER_MIN:
+            out.append(("OPENER", '%d sentences in a row open on "%s": vary the opening '
+                        "or merge them" % (run, word)))
+        word, run = w, (1 if w else 0)
+    if head_words and len(sents) == 1 and len(sents[0].split()) <= HEADECHO_MAX_WORDS:
+        said = content_words(sents[0])
+        added = said - head_words
+        # A figure the heading does not carry is not an echo, whatever the word
+        # count says. The one-new-word allowance was calibrated on an added
+        # noun, and rule 8 puts a number above any noun: "Three companies tried
+        # and stopped in 2021." under "Three companies tried and stopped" adds
+        # the year, which is the one thing a reader of the heading did not have.
+        if len(said) >= 2 and len(added) <= HEADECHO_NEW \
+                and not any(w[0].isdigit() for w in added):
+            out.append(("HEADECHO", "the one sentence under the heading restates it: %s"
+                        % sents[0][:60]))
+    return out
 
 def _inflect(base):
     yield base
@@ -468,6 +747,10 @@ def lint(path):
                           # H1 and calls them outside the word count, so honour that
     sec_src, sec_figs = False, []   # does this section cite anything, and its figure lines
     seen = []  # (line, sentence) for the REPEAT check
+    # HEADECHO. The heading's own content words, held until the next block of
+    # any kind arrives, because only the block DIRECTLY under a heading can
+    # restate it and every later paragraph is the section doing its work.
+    head_words = set()
     def close_callout_run():
         nonlocal crun
         if crun > MAX_CALLOUT_RUN:
@@ -486,7 +769,7 @@ def lint(path):
     def flush_para():
         # Split sentences only after joining physical lines, or a hard-wrapped
         # sentence reads as two and its tail as a fragment.
-        nonlocal prun, prun_line
+        nonlocal prun, prun_line, head_words
         if not para: return
         text = " ".join(para).strip()
         label = bool(LABEL_LINE.match(text))
@@ -516,6 +799,23 @@ def lint(path):
             if (4 <= n <= FRAGMENT_MAX_WORDS and not para_action and not label
                     and not DATA_ROW.match(s) and not s.endswith(":") and not has_verb(s)):
                 add(para_start, "FRAGMENT", "no verb - write a complete sentence: %s..." % s[:60])
+        # The humanizer checks that need more than one sentence, or the heading
+        # above them: the split contrast, the repeated opening, the echo.
+        # OPENER is handed the sentences only for PLAIN prose outside the action
+        # section and the appendices, and both exclusions were measured. In an
+        # ::asks row, "What do your followers pay you for? | What did you last
+        # stop selling? | What do the men ask you?" is three cells of one
+        # component, not three sentences of a paragraph. In the action section
+        # "Ask her age... Ask which tests... Ask the month" is a step list whose
+        # steps are commands, and in an appendix "A Taylor & Francis study...
+        # A PMC article... A PubMed review..." is a pile of lost sources, each
+        # of which has to start with its article. All three are ours on purpose,
+        # which makes a check that fails them a defect in the check. This is the
+        # same exemption FRAGMENT and PARA already take from para_action.
+        for kind, msg in humanizer_para(sents, head_words,
+                                        opener=para_plain and not para_action):
+            add(para_start, kind, msg)
+        head_words = set()
         del para[:]
     def close_section():
         # A section-level "Sources:" line sources the whole section; a 3-line window
@@ -566,6 +866,7 @@ def lint(path):
             in_tag, tag_name = False, None
             headings.append(stripped)
             raw_text = re.sub(r"^#+\s*", "", stripped).strip()
+            head_words = content_words(raw_text)
             # render.py strips a bare leading number from an h2 itself and offsets the CSS
             # counter, so the legacy "## 09 - ..." id is not a double number and is exempt.
             legacy = stripped.startswith("## ") and NUM_HEADING.match(stripped)
@@ -616,8 +917,23 @@ def lint(path):
             if re.search(r"\b" + re.escape(w) + r"\b", line if cased else low,
                          0 if cased else re.I):
                 add(i, "INTERNAL", '"%s" is the system\'s own vocabulary, not the reader\'s' % w)
+        # The humanizer line checks read the line BEFORE the table-row branch
+        # takes it away, so a cell and a heading are read too: an em dash in a
+        # source table is the same fault as an em dash in a sentence.
+        #
+        # A ::quote block is the exception, because it is the one block whose
+        # words are not the writer's. COMPONENTS.md requires a real quotation
+        # with its source and an attribution line that may open on an em dash,
+        # SKILL.md allows the tag only for that, and the stage 9 editor may not
+        # alter a quoted fact. So a tell inside one has no legal repair: the
+        # writer must either misquote the source or delete the evidence, and
+        # DASH is not advisory, so an em dash in a sourced quotation failed
+        # --strict with nothing the editor was permitted to do about it.
+        if not (in_tag and tag_name == "quote"):
+            for kind, msg in humanizer_line(line):
+                add(i, kind, msg)
         if stripped.startswith("|") and stripped.endswith("|") and "---" not in stripped:
-            flush_para(); close_prose_run()
+            flush_para(); close_prose_run(); head_words = set()
             # Count the cells, not the pipes. "| a | b |" split() gives 5 for 2 words,
             # which charged a mandated table 64 phantom words in the acceptance test.
             row_words = sum(len(c.split()) for c in stripped.strip("|").split("|"))
@@ -650,7 +966,7 @@ def lint(path):
         # every finding and an italic subtitle under every heading, and skipping both hid
         # 246 words of one 700-word part from its own budget.
         if re.fullmatch(r"\*{1,2}[^*]+\*{1,2}", stripped) or HTML_LINE.match(stripped):
-            flush_para(); close_prose_run()
+            flush_para(); close_prose_run(); head_words = set()
             plain = len(stripped.strip("*").split())
             sec_words += plain
             if body_started and not sec_appendix: doc_words += plain
