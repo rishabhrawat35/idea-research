@@ -34,7 +34,7 @@ If an answer sounded like a consultant wrote it, tell us which sentence gave it 
 
 There is no test suite. Run the skill on two or three ideas you already know the answer to, and check three things:
 
-1. Did it finish in under 25 minutes with fewer than 12 agents?
+1. Did it finish inside the pipeline's own budget, which SKILL.md puts at thirteen to sixteen agents and twenty at the longest legal path?
 2. Does the answer name real companies and real prices?
 3. Would you send it to a friend, or does it read like a report?
 

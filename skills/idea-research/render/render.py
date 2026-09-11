@@ -78,6 +78,19 @@ HEADNUM_RE = re.compile("^(\\d+)\\s*(?:[.)\u00b7\u2013\u2014:-]\\s*)+")
 BADGE_RE = re.compile(r"\[\[(?:(ok|warn|bad|flat):)?([^\]\n|]{1,40})\]\]")
 
 
+def shown_path(path):
+    """The path as the caller would type it, so the printed line is portable.
+
+    Printing the absolute path made the renderer name the checkout it ran in,
+    which nobody reading that output in a README or a chat can reproduce.
+    """
+    try:
+        rel = os.path.relpath(path, os.getcwd())
+    except ValueError:
+        return path
+    return path if rel.startswith(os.pardir) else rel
+
+
 def slug(text):
     s = re.sub(r"<[^>]+>", "", text).lower()
     s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")
@@ -1150,8 +1163,8 @@ def main(argv):
              spec.get("density", "regular")))
     fonts = [f for f in (spec.get("body"), spec.get("display")) if f]
     print("fonts: %s" % (", ".join(fonts) if fonts else "system stack only"))
-    print("wrote %s (%d bytes)" % (html_path, len(page.encode("utf-8"))))
-    print("wrote %s (%d bytes)" % (clean_path, len(clean.encode("utf-8"))))
+    print("wrote %s (%d bytes)" % (shown_path(html_path), len(page.encode("utf-8"))))
+    print("wrote %s (%d bytes)" % (shown_path(clean_path), len(clean.encode("utf-8"))))
     if markdown is None:
         print("note: the markdown package is not installed, so the built-in "
               "converter was used (headings, bold, italic, code, links, lists, "
