@@ -11,11 +11,12 @@
 <br>
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/badge/version-6.0.0-8A63D2?style=flat-square)](skills/idea-research/SKILL.md)
+[![Version](https://img.shields.io/badge/version-6.1.0-8A63D2?style=flat-square)](skills/idea-research/SKILL.md)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-8A63D2?style=flat-square)](https://code.claude.com/docs/en/skills)
 [![Agent Skill](https://img.shields.io/badge/agent%20skill-compatible-2ea44f?style=flat-square)](https://agentskills.io)
 [![Themes](https://img.shields.io/badge/themes-4%20curated-58a6ff?style=flat-square)](#-design-and-structure)
 [![Gates](https://img.shields.io/badge/gates-3%20must%20exit%200-58a6ff?style=flat-square)](#-three-gates-before-a-run-ships)
+[![Lint checks](https://img.shields.io/badge/lint-19%20checks-58a6ff?style=flat-square)](#the-nineteen-checks)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
 
 <br>
@@ -58,8 +59,8 @@ The skill body carries the scripts' commands but not the scripts. If you install
 skill says so: a missing script means running its checks by reading, and saying that is what
 happened. Clone the repository if you want the scripts.
 
-**Versions.** [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) is at `6.0.0` and the
-version line at the top of `SKILL.md` reads `6.0.0`. Keep both in step when you fork, because the
+**Versions.** [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json) is at `6.1.0` and the
+version line at the top of `SKILL.md` reads `6.1.0`. Keep both in step when you fork, because the
 desktop app shows only the version printed in the skill body, and a stale line there is the only
 number a desktop user ever sees.
 
@@ -110,10 +111,13 @@ flowchart TD
     R -->|refused, or Low certainty| RC["<b>5d · CHALLENGE</b><br/>a second reconciler on a close call"]
     R --> W["<b>6 · WRITE</b><br/>the answer, badges on unsourced figures"]
     RC --> W
-    W --> DS["🎨 <b>7 · DESIGN AND STRUCTURE</b><br/>theme and components, then a UX peer"]
+    W --> DS["🎨 <b>7 · DESIGN AND STRUCTURE</b><br/>one agent, theme and components"]
     DS --> LT["<b>8 · LINT</b><br/>lint.py --strict"]
-    LT --> ED["✏️ <b>9 · EDIT, THEN REVISE ONCE</b>"]
-    ED --> RD["<b>10 · RENDER</b><br/>report.html and ANSWER_clean.md"]
+    LT --> J1["👁️ <b>9 · UX PEER</b><br/>judges the built page"]
+    LT --> J2["✏️ <b>9 · EDITOR</b><br/>judges the words"]
+    J1 --> RV["<b>9 · REVISE ONCE</b><br/>one agent applies both lists"]
+    J2 --> RV
+    RV --> RD["<b>10 · RENDER</b><br/>report.html and ANSWER_clean.md"]
     RD --> K([✅ yes / no / not this version, but this one might])
 
     style A fill:#1f6feb,stroke:#58a6ff,color:#fff
@@ -125,34 +129,49 @@ flowchart TD
     style RC fill:#2d1618,stroke:#f85149,color:#c9d1d9
     style DS fill:#161b33,stroke:#8a63d2,color:#c9d1d9
     style LT fill:#2b2416,stroke:#d29922,color:#c9d1d9
-    style ED fill:#2b2416,stroke:#d29922,color:#c9d1d9
+    style J1 fill:#161b33,stroke:#8a63d2,color:#c9d1d9
+    style J2 fill:#2b2416,stroke:#d29922,color:#c9d1d9
+    style RV fill:#2b2416,stroke:#d29922,color:#c9d1d9
 ```
 
 The stage table below is the one in `SKILL.md`, with its own agent counts and its own timings.
 
-| Stage | Agents | Time | What happens |
-|---|:--:|---|---|
-| 0 Brief | 0 | 2 min | Scope, and what would kill this |
-| 1 Scout | 1 | 4 min | Exists? Anyone paying? What changed? |
-| 2 Research | 3-6 | 9 min | Parallel diggers, one file each |
-| 3 Ledger | 0 | 10 sec | Three scripts build the evidence base |
-| 4 The pair | 2 | 5 min | Strongest case for, strongest case against |
-| 5 Reconcile | 2 | 4 min | Weigh both cases, do the arithmetic, challenge a close call |
-| 6 Write | 1 | 4 min | The answer |
-| 7 Design and structure | 2 | 5 min | One picks the theme and the components, a peer judges the rendered page |
-| 8 Lint | 0 | 5 sec | A script checks the rules, strictly |
-| 9 Edit and revise | 2 | 4 min | One rejects the prose, one applies the fixes |
-| 10 Render | 0 | 1 min | A page you can share |
+| Stage | Agents | Time | Measured or estimated | What happens |
+|---|:--:|---|:--:|---|
+| 0 Brief | 0 | 2 min | estimate | Scope, and what would kill this |
+| 1 Scout | 1 | 4 min | estimate | Exists? Anyone paying? What changed? |
+| 2 Research | 3-6 | 16.8 min | measured | Parallel diggers, one file each |
+| 3 Ledger | 0 | 10 sec | estimate | Three scripts build the evidence base |
+| 4 The pair | 2 | 7.0 min | measured | Strongest case for, strongest case against |
+| 5 Reconcile | 2 | 11.1 min | measured | Weigh both cases, do the arithmetic, challenge a close call |
+| 6 Write | 1 | 10.4 min | measured | The answer |
+| 7 Design and structure | 1 | 12.5 min | measured | One agent picks the theme and the components |
+| 8 Lint | 0 | 5 sec | estimate | A script checks the rules, strictly |
+| 9 Judge and revise | 3 | 10.1 min | measured | A UX peer and an editor read the same page, one reviser applies both lists |
+| 10 Render | 0 | 1 min | estimate | A page you can share |
 
-Eleven stages, and `SKILL.md` puts a typical run at thirteen to sixteen agents and about 38 minutes.
-Those are the counts in the column above: the minimum spends three researchers and the maximum spends
-six. Stage 1 often ends the run before the expensive part. The longest legal path is twenty agents,
-which is that same list plus two specialists and two check-backs.
+Eleven stages, and `SKILL.md` puts a typical run at thirteen to sixteen agents. Those are the counts
+in the column above: the minimum spends three researchers and the maximum spends six. Stage 1 often
+ends the run before the expensive part. The longest legal path is twenty agents, which is that same
+list plus two specialists and two check-backs.
+
+**Where the times come from.** Six of the eleven rows carry the time that stage actually took on one
+run, timed on the critical path with parallel agents counted once. That run took 83 minutes end to
+end, and the eleven rows above account for 75 of them. The other five rows are the estimates the
+table has always carried, because a brief and three scripts were never worth timing. The earlier
+table advertised 38 minutes and nobody had measured it: stage 2 was written as 9 minutes and took
+16.8, stage 6 was written as 4 and took 10.4.
+
+Two rows need a caveat. Stage 7 and stage 9 were timed before the UX peer moved out of the design
+stage, so the 12.5 covers the design agent and that peer together, and the 10.1 covers the editor and
+the reviser alone. Shortening the ledger, capping the blocked-source ladder and sending the two
+judges out together are all expected to cut the total. Nobody has measured the new total yet, so this
+file does not print one.
 
 > 💨 **In a hurry?** Ask for quick or triage mode, or compare more than one idea, and it runs stages 0,
-> 1, 2, 3, 6, 8 and 10 with three researchers. No pair, no design stage, no editor, and the page comes
-> out on the default theme, about 20 minutes. The answer then takes certainty of evidence from the
-> sourced count and states no strength of view.
+> 1, 2, 3, 6, 8 and 10 with three researchers. No pair, no design stage, no judges, and the page comes
+> out on the default theme. The answer then takes certainty of evidence from the sourced count and
+> states no strength of view. `SKILL.md` states no time for quick mode, so neither does this file.
 
 <br>
 
@@ -169,7 +188,7 @@ python3 <skill folder>/tools/run_state.py check runs/<slug>/ --strict
 
 The middle one applies to any mode that runs stage 7, which quick mode does not.
 
-[`tools/run_state.py`](skills/idea-research/tools/run_state.py), 467 lines, turns the pipeline
+[`tools/run_state.py`](skills/idea-research/tools/run_state.py), 479 lines, turns the pipeline
 checklist into data, so a stage nobody ran fails loudly instead of quietly. Every stage opens with
 `init` and closes with `done`, and `check` reads the run directory back:
 
@@ -187,16 +206,23 @@ positional arguments:
 options:
   -h, --help         show this help message and exit
 
-stage ids in order: brief scout research ledger pair reconcile checkback design write lint edit render
+stage ids in order: brief scout research ledger pair reconcile checkback write design lint edit render
 modes: full, teardown, money-first, new-thing, proxy, quick
 quick mode requires only: brief, scout, research, ledger, write, lint, render
 checkback is optional in every mode and never fails a check.
 ```
 
 Twelve stage ids, and each one names the file that proves it happened. A stage is recorded on its
-output, not on an agent's word: `design` wants `theme.json`, `layout.md` and `07_ux.md`, so a UX peer
-that never ran shows up as a gap, and `lint` wants `lint.json`, so the gate cannot be recorded on
-trust. Stages a mode does not use print as "not in this mode" and never fail.
+output, not on an agent's word: `ledger` wants all four of `claims_summary.md`, `claims_brief.md`,
+`contradictions.md` and `verify_queue.md`, `design` wants `theme.json` and `layout.md`, `edit` wants
+both `06_edit.md` and `07_ux.md` so a judge that never ran shows up as a gap, and `lint` wants
+`lint.json` so the gate cannot be recorded on trust. Stages a mode does not use print as "not in this
+mode" and never fail.
+
+The order in that help text is the order the pipeline runs, and it is read by `check` when it names
+the first gap. It used to list `design` before `write`, which sent an orchestrator to compose a page
+before the answer it was composing existed. `write` now sits at position 8 and `design` at 9, which
+is what `SKILL.md` does.
 
 <details>
 <summary><b>What <code>check</code> prints</b>, on a real run in new-thing mode</summary>
@@ -206,26 +232,26 @@ trust. Stages a mode does not use print as "not in this mode" and never fail.
 Runs are gitignored, so this one is not in the repository.
 
 ```
-$ python3 tools/run_state.py check runs/conceive-planner/ --strict
-run   : runs/conceive-planner
+$ python3 tools/run_state.py check runs/conceive-v6/ --strict
+run   : runs/conceive-v6
 mode  : new-thing
 stages: 11 required, 1 optional, 0 not in this mode
-state : initialised 2026-09-10T16:02:15+00:00, last change 2026-09-10T16:54:10+00:00
+state : initialised 2026-09-10T17:59:47+00:00, last change 2026-09-10T19:30:49+00:00
 
-  #   stage      required output                                        status   note
-  --  ---------  -----------------------------------------------------  -------  ----------------------------
-  1   brief      00_brief.md                                            present  scope agreed with the founder
-  2   scout      01_scout.md                                            present  (output on disk, never recorded)
-  3   research   _findings.md, lanes/                                   present  (output on disk, never recorded)
-  4   ledger     claims_summary.md, contradictions.md, verify_queue.md  present  (output on disk, never recorded)
-  5   pair       04a_case_for.md, 04b_case_against.md                   present  (output on disk, never recorded)
-  6   reconcile  05_reconcile.md                                        present  (output on disk, never recorded)
-  7   checkback  05c_checkback.md                                       present  (output on disk, never recorded)
-  8   design     theme.json, layout.md, 07_ux.md                        present  warm theme, accent #7d3550
-  9   write      ANSWER.md                                              present  (output on disk, never recorded)
-  10  lint       lint.json                                              present  lint --strict exit 0
-  11  edit       06_edit.md                                             present  (output on disk, never recorded)
-  12  render     report.html, ANSWER_clean.md                           present  rebuilt after the UX pass
+  #   stage      required output                                                         status   note
+  --  ---------  ----------------------------------------------------------------------  -------  --------------------------------------------
+  1   brief      00_brief.md                                                             present  same idea, plus the five holes recorded earlier
+  2   scout      01_scout.md                                                             present  carried from the earlier pass, provisional
+  3   research   _findings.md, lanes/                                                    present  four lanes on the recorded holes
+  4   ledger     claims_summary.md, claims_brief.md, contradictions.md, verify_queue.md  present  (recorded, no note)
+  5   pair       04a_case_for.md, 04b_case_against.md                                    present  (recorded, no note)
+  6   reconcile  05_reconcile.md                                                         present  (output on disk, never recorded)
+  7   checkback  05c_checkback.md                                                        present  Flo narrower than carried
+  8   write      ANSWER.md                                                               present  (output on disk, never recorded)
+  9   design     theme.json, layout.md                                                   present  (recorded, no note)
+  10  lint       lint.json                                                               present  strict exit 0
+  11  edit       06_edit.md, 07_ux.md                                                    present  26 entries, 21 fixes applied
+  12  render     report.html, ANSWER_clean.md                                            present  (recorded, no note)
 
 OK. 11 of 11 required stages have their output.
 ```
@@ -299,7 +325,7 @@ needing more means the idea is scoped too wide.
 </details>
 
 <details>
-<summary><b>Blocked sources are not an excuse</b>, and the file has to say which rungs it tried</summary>
+<summary><b>Blocked sources are not an excuse</b>, and the ladder now has a ceiling</summary>
 
 <br>
 
@@ -312,8 +338,15 @@ goes back once.
 4. Someone who already did the reading: market reports, journalism, dissertations.
 5. The browser tools, if the session has them.
 
-Only then "could not find out", listing the rungs tried. Finding nothing that argues against the idea
-is treated as not having looked.
+A researcher works at most three of those rungs on any one question, then writes "could not find out"
+and names the rungs it tried. It may skip straight to the rung most likely to work rather than always
+starting at the first. The ceiling covers one question and not the file, so the same researcher works
+the ladder again for the next question.
+
+That cap was added because one proxy researcher spent 16.8 minutes and 67 tool calls against a
+twelve-search budget on a topic where Reddit, Quora, Blind and six academic sources all refused it.
+Every rung failed, and the researcher kept climbing. Finding nothing that argues against the idea is
+still treated as not having looked.
 
 </details>
 
@@ -326,7 +359,7 @@ Stage 3 used to be an agent writing an evidence ledger by hand. It is now three 
 ledger any more.
 
 ```bash
-python3 <skill folder>/tools/claims.py     runs/<slug>/            # claims.jsonl + claims_summary.md
+python3 <skill folder>/tools/claims.py     runs/<slug>/            # claims.jsonl + claims_summary.md + claims_brief.md
 python3 <skill folder>/tools/contradict.py runs/<slug>/            # contradictions.md
 python3 <skill folder>/tools/verify.py     runs/<slug>/ --sample 8 # verify_queue.md + verify.json
 python3 <skill folder>/tools/run_state.py  done runs/<slug>/ ledger
@@ -339,6 +372,7 @@ in the repository:
 $ python3 tools/claims.py runs/ttc-planner/
 395 claims from 11 files -> runs/ttc-planner/claims.jsonl
 sourced 53, guess 37, unsourced 305
+342 shaky row(s), 212 of them carrying a figure -> runs/ttc-planner/claims_brief.md
 
 $ python3 tools/contradict.py runs/ttc-planner/
 3 contradiction pair(s) across 395 claims -> runs/ttc-planner/contradictions.md
@@ -356,7 +390,7 @@ figure and badge the unsourced ones.
 
 | Script | Lines | What it does | What it will not do |
 |---|:--:|---|---|
-| [`claims.py`](skills/idea-research/tools/claims.py) | 244 | Pulls every factual claim out of the run's research files, records the figure on the line and whether a source sits behind it, and writes `claims.jsonl` plus `claims_summary.md`. It skips the files the pipeline generates itself, so it never reads its own output. Nothing is hardcoded, so a renamed or added stage file is audited without editing the script. | Judge whether a sourced claim is true |
+| [`claims.py`](skills/idea-research/tools/claims.py) | 347 | Pulls every factual claim out of the run's research files, records the figure on the line and whether a source sits behind it, and writes `claims.jsonl`, the full `claims_summary.md` and the short `claims_brief.md`. It skips the files the pipeline generates itself, so it never reads its own output. Nothing is hardcoded, so a renamed or added stage file is audited without editing the script. | Judge whether a sourced claim is true |
 | [`contradict.py`](skills/idea-research/tools/contradict.py) | 588 | Reads `claims.jsonl` and flags three cases only: one entity carrying two different figures of the same kind, one entity with two different years on the same event, and one line asserting what another negates. Writes `contradictions.md`. | Find every disagreement. Its own help says precision beats recall, because a checker that cries wolf gets switched off |
 | [`verify.py`](skills/idea-research/tools/verify.py) | 158 | Samples the claims that carry a URL into `verify_queue.md`, a numbered worklist with three boxes per claim (SUPPORTED, NOT SUPPORTED, COULD NOT FETCH), and the same sample as data in `verify.json`. `--seed` reproduces a sample. | Fetch anything. Its own help says so in those words |
 
@@ -365,22 +399,58 @@ verify queue has an owner too: the check-back agent works the rows that carry we
 it found into `05c_checkback.md`. `SKILL.md` gives the reason for sampling at all, which is that
 published audits find only about half of cited statements fully supported by the source cited.
 
+### 📇 A short ledger, so late stages stop re-reading the long one
+
+`claims.py` writes two ledgers, not one. `claims_summary.md` is the full thing, every claim as a row.
+`claims_brief.md` is the counts, then one compact line for each shaky row that carries a figure: the
+figure, its status, the file and line, and the first twelve words of the claim.
+
+A shaky row with no figure in it stays out of the brief. The writer cannot check a prose line against
+a source the way it can check a number, so the brief carries only what a reader can act on, and the
+full ledger keeps the rest.
+
+Stages 4a, 4b, 5 and 6 read the brief. Appendix A still reads the full ledger, and the writer opens
+`claims_summary.md` for those appendix rows and for nothing else.
+
+Here is what that saves. The run below holds only what exists at stage 3, meaning the brief, the
+scout file, `_findings.md` and `lanes/`, with nothing the pipeline generated afterwards:
+
+```
+$ python3 tools/claims.py runs/stage3/
+356 claims from 7 files -> runs/stage3/claims.jsonl
+sourced 88, guess 6, unsourced 262
+268 shaky row(s), 139 of them carrying a figure -> runs/stage3/claims_brief.md
+
+$ wc -w runs/stage3/claims_summary.md runs/stage3/claims_brief.md
+ 9098 runs/stage3/claims_summary.md
+ 2326 runs/stage3/claims_brief.md
+11424 total
+```
+
+Five agents used to read those 9,098 words in full. Four of them now read the 2,326 instead, and the
+fifth, the writer, opens the long one only for Appendix A. Of the 356 claims, 268 were unsourced or
+marked a guess and 139 of those carried a figure, so the brief is 139 lines plus the counts.
+`run_state.py` lists `claims_brief.md` among the four files the ledger stage owes, because four
+prompts now depend on a file nothing used to check was written.
+
 <br>
 
 ## 🎨 Design and structure
 
 Stage 7 is new in 6.0.0 and it is why the page is no longer dark only. It runs after the answer is
-finished, so structure is decided from a real document rather than guessed before one exists. Two
-agents run, and neither may change a fact, a number or a sentence.
+finished, so structure is decided from a real document rather than guessed before one exists. One
+agent runs it, and it may not change a fact, a number or a sentence.
 
-| | Agent | What it writes |
+| | What the design agent does | What it writes |
 |:--:|---|---|
-| 1️⃣ | The designer picks one of four themes by the idea's domain, tunes the accent and nothing else, then walks the answer block by block deciding which block becomes which component | `theme.json`, `layout.md`, and tag comment lines added, moved or removed in `ANSWER.md` |
-| 2️⃣ | A peer meets the page cold, renders it, looks at it at 1100px and at 400px, and returns a fix list the way the editor does | `07_ux.md`, where every entry is a tag move, a tag removal, a block split or a theme change |
+| 1️⃣ | Picks one of four themes by the idea's domain and tunes the accent, then runs the contrast gate until it exits 0 | `theme.json` |
+| 2️⃣ | Walks the answer block by block, deciding which block becomes which component and which stays prose | `layout.md` |
+| 3️⃣ | Applies that decision by adding, moving and removing tag comment lines, and nothing else | the tag lines in `ANSWER.md` |
 
-The orchestrator applies that list to `ANSWER.md` and `theme.json`, tags and theme keys only. A fix
-may move the accent, so the contrast gate runs again and has to exit 0 before the page is rendered
-once more.
+It works alone on purpose: nobody can judge a page that has not been composed yet. The peer who
+judges the built page runs at [stage 9](#-the-linter), after the lint, reading the same draft the
+editor reads. That is the change this round made to the shape of the pipeline, and `07_ux.md` moved
+with the peer, from the design stage's required outputs to the edit stage's.
 
 **The four themes** live in [`render/themes.py`](skills/idea-research/render/themes.py), 270 lines.
 Nothing generates a fifth, and each one is a complete token set: ground, surface, lines, text, muted,
@@ -475,7 +545,7 @@ know rather than failing:
 
 ## 🧪 The linter
 
-[`skills/idea-research/lint.py`](skills/idea-research/lint.py) is 675 lines, standard library only,
+[`skills/idea-research/lint.py`](skills/idea-research/lint.py) is 758 lines, standard library only,
 and runs in seconds. There is one copy and that is its path.
 
 ```bash
@@ -497,7 +567,7 @@ options:
 ```
 
 The exit code is the gate, not the file. `lint.json` puts the counts on disk so the stage cannot be
-recorded on trust and so the editor at stage 9 has something to paste. Drop `--json` and the redirect
+recorded on trust and so the judges at stage 9 have something to paste. Drop `--json` and the redirect
 to read the same run in prose. The default is advisory and exits 0.
 
 **A clean answer**, the one the release was shipped against:
@@ -528,10 +598,11 @@ That answer is 5,737 visible words and has no block tags, so the renderer would 
 prose. Ten runs of four or more plain paragraphs is the reason stage 7 exists. `--strict` on it exits
 1 on the other 37 problems, and would still exit 1 if the length numbers were deleted.
 
-### The eighteen checks
+### The nineteen checks
 
-Sixteen of them fail `--strict`. `BUDGET` and `TOTAL` are counted, printed and labelled advisory, and
-neither can fail a run any more.
+Seventeen of them fail `--strict`. `BUDGET` and `TOTAL` are counted, printed and labelled advisory,
+and neither can fail a run any more. The list is the `CHECKS` tuple in `lint.py`, which `--json`
+prints in full whether or not a check fired.
 
 | Check | What trips it |
 |---|---|
@@ -551,6 +622,7 @@ neither can fail a run any more.
 | `INTERNAL` | The system's own vocabulary reaching the founder |
 | `QUOTE` | Quotation marks around five or more words with no source link, because nobody was interviewed |
 | `REPEAT` | A sentence repeated word for word, or a sentence over twelve words that is 0.90 similar to another |
+| `TAG_ORPHAN` | A block tag with nothing of its own to bind: another tag follows it, or a heading, or a code fence, or the end of the file |
 | `BUDGET` *(advisory)* | A section over its advisory fallback: 350 words for the first part, 800 each for the second and third, 250 for any other section. Appendices are never capped |
 | `TOTAL` *(advisory)* | The whole answer over 2,000 visible words, appendices excluded |
 
@@ -587,30 +659,75 @@ needed.
 </details>
 
 <details>
-<summary><b>Then an editor who never saw the research</b></summary>
+<summary><b><code>TAG_ORPHAN</code> on a fixture of four tags with nothing to bind</b></summary>
 
 <br>
 
-Stage 9 reads `ANSWER.md` and the lint output, and nothing else. It can do exactly three things, and
-inventing a fact is not one of them.
+A block tag is an HTML comment that applies to the block after it. A tag with no block after it does
+not fail quietly: the renderer binds it to whatever comes next, so a paragraph nobody wrote as a
+warning renders as one. `TAG_ORPHAN` reads a tag exactly the way `render.py` does, including the
+blank lines and plain comments that do not break a binding, so a tag the renderer will not see is a
+tag the check does not report. This fixture was written to fail it and is not in the repository.
 
-| | |
-|---|---|
-| 🔁 **FIX** | A replacement built only from words already on the page |
-| ✂️ **CUT** | Delete the line |
-| ❓ **NEEDS A FACT** | Name the missing fact. It may not supply it. |
+```
+$ python3 lint.py fixtures/orphan.md --strict
+fixtures/orphan.md:5: TAG_ORPHAN: ::verdict has no block of its own: the next block tag, on line 6, replaces it before it binds anything. Delete the tag, or give it back the content it lost
+fixtures/orphan.md:11: TAG_ORPHAN: ::note has no block of its own: a heading follows on line 13, and render.py drops a ::note tag that lands on a heading. Delete the tag, or give it back the content it lost
+fixtures/orphan.md:15: TAG_ORPHAN: ::warn has no block of its own: a code fence follows on line 17, and render.py leaves a fenced block untagged, so the tag lands on the block after it. Delete the tag, or give it back the content it lost
+fixtures/orphan.md:25: TAG_ORPHAN: ::tip has no block of its own: the file ends before any block follows it. Delete the tag, or give it back the content it lost
 
-A second agent applies the swaps. For a `NEEDS A FACT` line it looks in the research files: if the
-fact is there it writes the line and cites the source, and if it is not, the line gets marked rather
-than deleted. A line proposing an action keeps its words and moves into Appendix C, saying what was
-proposed and what is missing behind it. A line stating a finding keeps its place and carries
-`[[bad:Not found]]`. Deletion is only for a line asserting a figure as fact with no source anywhere.
+4 problems: TAG_ORPHAN 4
+18 visible words (no cap; advisory fallback 2000), 0 sections over their advisory fallback, 5 block tags
+```
 
-The editor also owns one of the new checks: the lint output names every `FILLER` paragraph, and the
+The fenced-code case was not predicted. `render.py` leaves a fenced block untagged, so a tag written
+above a code fence skips it and lands on the block after it. `::appendix` is the one exemption: it is
+placed above an `##` heading on purpose and a heading does not orphan it. On the two real answers on
+disk this check fires zero times.
+
+</details>
+
+<details>
+<summary><b>Then two judges in one message, and one reviser</b></summary>
+
+<br>
+
+Stage 9 sends the UX peer and the editor out in a single message. They read the same `ANSWER.md`, and
+neither sees the other's output, so neither is anchored on the other's list. One judges how the page
+looks and the other judges the words, and neither may change a fact.
+
+| Judge | Reads | Every entry it may return |
+|---|---|---|
+| 👁️ **The UX peer** | The rendered page at 1100px and at 400px, or `report.html` and the tag census when the session has no browser | A tag move, a tag removal, a block split or a theme change, and never a change to a word |
+| ✏️ **The editor** | `ANSWER.md` and the lint output, and nothing else | `FIX`, a replacement built only from words already on the page; `CUT`, delete the line; `NEEDS A FACT`, name the missing fact without supplying it |
+
+The UX peer used to sit inside the design stage and the editor two stages after it. Stages 7, 8 and 9
+then ran as three agents in a row and took 22 of that run's 83 minutes, and two of those agents read
+the same finished answer and changed no fact. The design agent still runs alone before the lint,
+because nobody can judge a page that has not been composed.
+
+One reviser then applies both lists and says which entry came from which. Where the two lists touch
+the same line, the editor owns the words and the UX peer owns the tags, so both apply. Where they
+truly conflict, the answer's meaning wins and the reviser says which entry it skipped. The UX peer
+names a block by its heading or first six words, which an editor `FIX` can rewrite, so the reviser
+matches those anchors against the text the peer read, applies the words first, then places the tags.
+
+One rule exists because of a defect found while testing this. When the editor cuts the only line
+inside a tagged block, the reviser deletes that block's tag comment as well. A tag left standing
+binds the next paragraph and renders it as a callout nobody wrote.
+
+For a `NEEDS A FACT` line the reviser looks in the research files: if the fact is there it writes the
+line and cites the source, and if it is not, the line gets marked rather than deleted. A line
+proposing an action keeps its words and moves into Appendix C, saying what was proposed and what is
+missing behind it. A line stating a finding keeps its place and carries `[[bad:Not found]]`. Deletion
+is only for a line asserting a figure as fact with no source anywhere.
+
+The editor also owns one of the checks: the lint output names every `FILLER` paragraph, and the
 editor lists them to cut, worst first, and never cuts a hedge, a source line or a badge.
 
-Then the lint runs again, one round only, because two agents editing each other never converge. If
-`--strict` still fails, the run says so in chat instead of shipping quietly.
+Then the contrast gate runs again, because a UX entry may have moved the accent, and the lint runs
+again, one round only, because two agents editing each other never converge. If `--strict` still
+fails, the run says so in chat instead of shipping quietly.
 
 </details>
 
@@ -629,10 +746,10 @@ Then the lint runs again, one round only, because two agents editing each other 
 | Reconciler | ❌ zero searches | Where a number it needs is missing it writes "not found in the research", never an estimate |
 | The challenger | ❌ zero searches | Endorses the call or quotes the one line it disputes, and may not rewrite `05_reconcile.md` |
 | Writer | ❌ zero searches | *"YOU MAY NOT STATE ANY FACT THAT IS NOT IN THOSE FILES"* |
-| The designer | ❌ zero searches | May add, move and remove tag lines only, and may not change a word, a number, a heading or a badge |
-| The UX peer | ❌ zero searches | Judges the rendered page, and every entry it returns is a tag move, a tag removal, a block split or a theme change |
-| Editor | ❌ zero searches | Replacements built only from words already on the page |
-| Reviser | ❌ zero searches | Adds no number, name, date, price or claim not already in the answer or a research file |
+| The designer, stage 7 | ❌ zero searches | May add, move and remove tag lines only, and may not change a word, a number, a heading or a badge |
+| The UX peer, stage 9 | ❌ zero searches | Judges the built page, and every entry it returns is a tag move, a tag removal, a block split or a theme change |
+| The editor, stage 9 | ❌ zero searches | Replacements built only from words already on the page |
+| The reviser, stage 9 | ❌ zero searches | Adds no number, name, date, price or claim not already in the answer or a research file |
 
 </details>
 
@@ -785,11 +902,13 @@ It is a straight line. No stage's output can re-trigger an earlier one.
 | Check-back agents | 2 |
 | Reconcile challengers | 1, and only on a refused call or Low certainty |
 | Design stage reruns | 1, and a second zero-tag render ships as prose |
-| Edit rounds | 1, and a second lint failure reports to you rather than looping |
+| Judges at stage 9 | 2, spawned in one message, and neither reads the other |
+| Revise rounds | 1, and a second lint failure reports to you rather than looping |
 | Longest legal path | 20 agents |
 
 That path is Scout, six researchers, two specialists, the two case agents, the reconciler, its
-challenger, two check-backs, the writer, the designer, the UX peer, the editor and the reviser.
+challenger, two check-backs, the writer, the designer, the UX peer, the editor and the reviser. Count
+those and you get twenty.
 
 </details>
 
@@ -803,14 +922,15 @@ Files section of `SKILL.md`, in its own words, so the two cannot drift.
 
 ```
 runs/<slug>/
-├── 00_brief.md          read by every agent: scope, and what would kill this
+├── 00_brief.md          read by every agent
 ├── 01_scout.md          exists, pays, what changed
 ├── _findings.md         running list, corrections
 ├── lanes/               one file per researcher
-├── claims.jsonl         every claim as data, read by the two scripts below
-├── claims_summary.md    sourced against guessed
+├── claims.jsonl         every claim as data, read by contradict.py and verify.py
+├── claims_summary.md    the full ledger, read by Appendix A
+├── claims_brief.md      the counts, then the shaky rows that carry a figure, read by stages 4 to 6
 ├── contradictions.md    where two sources disagree
-├── verify_queue.md      the check-back's rows, three boxes each
+├── verify_queue.md      the check-back's rows
 ├── verify.json          the same sample as data
 ├── 04a_case_for.md      the case that this works
 ├── 04b_case_against.md  the case that it fails
@@ -829,10 +949,13 @@ runs/<slug>/
 └── _state.md            the same table for a person to read
 ```
 
-That is a full run. `05c_checkback.md` and `05d_challenge.md` are absent when a run had no fact to look
-up and no close call, and a quick-mode run has no pair, no reconciler, no design stage and no editor,
-so it writes seven of these files and not the rest. Runs are kept, and `runs/` is gitignored, so the
-same idea reshaped a month later can be run again and the two directories compared side by side.
+That is a full run, and every line above is the Files section of `SKILL.md` in its own words.
+`05c_checkback.md` and `05d_challenge.md` are absent when a run had no fact to look up and no close
+call. A quick-mode run has no pair, no reconciler, no design stage and no judges, so nine of the
+entries above are missing from it: both case files, the reconcile file, the check-back, the
+challenge, `06_edit.md`, `theme.json`, `layout.md` and `07_ux.md`. Runs are kept, and `runs/` is
+gitignored, so the same idea reshaped a month later can be run again and the two directories compared
+side by side.
 
 <details>
 <summary><b>What is in ANSWER.md</b></summary>
@@ -848,7 +971,7 @@ is what gets cut. The run quoted above came out at 1,599 visible words with 25 b
 | **First, the call** | The call, the number that drives it, certainty of evidence and strength of view as separate sentences, the one condition that would change the answer, and the one thing to do today. Nothing else. |
 | **Second, the evidence** | Findings only, no recommending. Whether people refused this, could not have done it until now, or never tried it. Who has already tried and where they ended up. What this market pays for today in ₹. What the proxy measures found. Where the two cases disagreed. What breaks if the numbers are wrong. The problems the case against ranked go in one `::ranked` block, worst first. |
 | **Third, what to do** | The cheapest version that could exist by Friday, or one line saying no way in was found and what would have to change. A test under ₹20,000 and two weeks as numbered steps, the last one naming the number that means yes and the number that means no. The people to ask as an `::asks` block, named specifically enough to find this week. The next 90 days as a `::timeline`. |
-| **Appendix A** | Sources and calculations for every figure, from `claims_summary.md` unchanged, plus the sourced-against-guessed count |
+| **Appendix A** | Sources and calculations for every figure, one row per figure the answer actually cites, taken from the full `claims_summary.md` rather than the brief, plus the sourced-against-guessed count. Pasting the whole ledger once made an answer 112KB |
 | **Appendix B** | Where two sources disagree, from `contradictions.md`. If empty, it says the script found no numeric conflict |
 | **Appendix C** | What could not be found out: the question, why it matters, and the cheapest way to answer it |
 | **Appendix D** | How this looks from each side, and both cases in full |
@@ -883,7 +1006,7 @@ found, not that the research agrees with itself. 6.0.0 did not touch it.
 
 **Most claims arrive unsourced.** On that same run, `claims.py` counted 53 sourced, 37 marked as a
 guess and 305 unsourced out of 395. `SKILL.md` records another run at 154 of 222 claims with no
-source. That is exactly why the writer is told to check `claims_summary.md` before leaning on a figure
+source. That is exactly why the writer is told to check `claims_brief.md` before leaning on a figure
 and to badge any unsourced number, and why the certainty field exists at all.
 
 **The linter checks form, not truth.** A clean lint means the prose obeys the rules. It says nothing
@@ -893,7 +1016,19 @@ about whether a sourced figure is correct, or whether the source says what the l
 the regulators and the price expectations in stage 2 are Indian, so change the brief and the lanes if
 you point it elsewhere.
 
-### What 6.0.0 did not fix
+### What this round did not fix
+
+**A misbound tag still looks correct to the linter.** The defect this round closed is an editor
+cutting the only line inside a tagged block, which leaves the tag standing and lets the renderer bind
+it to the next paragraph. The fix is the reviser rule: delete that block's tag comment with the line.
+`TAG_ORPHAN` does not catch this case and cannot. The orphaned tag is followed by a blank line and
+then a real paragraph, which from the file alone is exactly what a correctly placed tag looks like. A
+linter cannot know that the block a tag binds is not the block it was written for. The check catches
+the neighbouring class, a tag with nothing at all to bind, and that is a bonus rather than the fix.
+
+**The new total is an expectation, not a measurement.** The 83 minutes in the pipeline table is a
+real run. The shorter ledger, the capped ladder and the two judges in one message are all expected to
+cut it, and nobody has timed a run since, so no new total is printed anywhere in this file.
 
 **The contrast gate measures contrast, not judgement.** `theme_check.py` proves the text can be read
 on the ground behind it. Whether `warm` was the right theme for this idea rests on one sentence the
@@ -901,7 +1036,8 @@ designer writes into `theme.json`, and no script reads that sentence.
 
 **`run_state.py` proves a file exists, not that a stage did its job.** It checks that the outputs a
 stage owes are on disk. A UX peer that wrote a thin `07_ux.md` and a designer who tagged three blocks
-both pass a `check`.
+both pass a `check`. Adding `claims_brief.md` to the ledger stage proves the brief was written, not
+that the four prompts downstream actually read it.
 
 **The UX peer needs a browser to see the page.** With none in the session it says so in its first line
 and judges `report.html` and the tag census instead, which is weaker than looking. On the run quoted
@@ -911,28 +1047,50 @@ here it had a browser and no web fonts, so it reviewed the page in the fallback 
 was tuned to fire zero times on the three real answers on disk, and that choice costs recall.
 
 **Run the ledger at stage 3 and nowhere else.** `claims.py` reads the run directory it is pointed at,
-and after stage 10 that directory holds the answer and the design files too. Run over this same run
-after the page was built, it read 16 files and counted 849 claims where stage 3 saw 8 files and 303
-claims. The stage-3 numbers are the ones that mean anything.
+and after stage 10 that directory holds the answer and the design files too. It skips the ten file
+names the pipeline generates itself, but not the case files, the reconcile file or the check-back.
+Run over one finished run after the page was built, it read 12 files and counted 619 claims where
+stage 3 saw 8 files and 303 claims. The stage-3 numbers are the ones that mean anything.
 
 <br>
 
-## 🧩 What changed in 6.0
+## 🧩 What changed in 6.1.0
 
-This was a pipeline change, so both version numbers went to `6.0.0`. The engine's research was already
-sound and its presentation was what failed, so the content agents are unchanged and what moved is who
-decides structure, who checks the page, and what a script can prove was done.
+A run was timed end to end for the first time and took 83 minutes against the 38 the table advertised.
+Four causes were found. Three are fixable without removing a stage, a check or an agent, and the
+fourth is that the advertised times had never been measured. Nothing below reduces what the engine
+checks. It reduces what the engine re-reads and how long it waits.
 
 | Change | Why |
 |---|---|
-| A design and structure stage between write and lint | The page was decided by the writer while writing, so structure was guessed before the document existed. Stage 7 reads the finished answer, picks the theme and the components, and a peer looks at the rendered page and returns a fix list |
+| `claims.py` writes a third file, `claims_brief.md` | The writer read 29,731 words before writing a sentence, and 9,098 of them were the full ledger, which five agents each read in full. The brief carries the counts and one compact line per shaky row that holds a figure. On a stage-3 file set that is 2,326 words against 9,098, and stages 4a, 4b, 5 and 6 read it instead. Appendix A still reads the full ledger, and the writer opens it for those rows alone |
+| The blocked-source ladder got a ceiling of three rungs | One proxy researcher spent 16.8 minutes and 67 tool calls against a twelve-search budget on a topic where every rung failed. Three rungs on one question, then "could not find out" naming the rungs tried. It is a ceiling on one question and not on the file, and a researcher may skip to the rung most likely to work |
+| The UX peer moved from stage 7 to stage 9 | Stages 7, 8 and 9 were three sequential agents and 22 of that run's 83 minutes, and two of them read the same finished answer without changing a fact. The design agent still composes the page alone, because nobody can judge a page that has not been composed. Then the lint, then the two judges in one message, then one reviser applying both lists |
+| A new lint check, `TAG_ORPHAN` | A block tag with nothing of its own to bind does not fail quietly: the renderer hands it to whatever comes next. It caught a case nobody predicted, where a fenced block renders untagged and the tag falls onto the block after it |
+| The pipeline table carries measured times | Six of the eleven rows now carry what that stage actually took on one run, and the file says which rows are measured and which keep their earlier estimate. Stage 2 was written as 9 minutes and took 16.8 |
+| `run_state.py` gained a required output and lost one | The ledger stage now owes `claims_brief.md`, because four prompts depend on a file nothing checked was written. `07_ux.md` moved from the design stage's outputs to the edit stage's, following the peer. Its stage order also listed `design` before `write`, which sent the "first gap" message to compose a page before the answer existed |
+
+<br>
+
+<details>
+<summary><b>And what changed in 6.0.0</b>, the release before this one</summary>
+
+<br>
+
+That was a pipeline change, so both version numbers went to `6.0.0`. The engine's research was
+already sound and its presentation was what failed, so the content agents were unchanged and what
+moved is who decides structure, who checks the page, and what a script can prove was done.
+
+| Change | Why |
+|---|---|
+| A design and structure stage between write and lint | The page was decided by the writer while writing, so structure was guessed before the document existed. Stage 7 read the finished answer, picked the theme and the components, and a peer looked at the rendered page and returned a fix list. That peer moved to stage 9 in the round above |
 | Four curated themes, not one dark stylesheet | The engine rendered every idea on the same dark ground. There are now two light-ground and two dark-ground themes, the designer picks one by domain and tunes only the accent, and generated palettes were ruled out because nothing would gate them |
 | A contrast gate on the tuned accent | An accent moved by hand can fail on its own tint. `theme_check.py` composites every tint over the ground and measures ten pairs against 4.5:1 and 3:1 |
 | Three new components: `::ranked`, `::timeline`, `::asks` | The ranked problems, the ninety days and the people to approach were rendering as prose, and in all three the order or the fields are the argument |
 | Findings number continuously across a part | Every finding sat in its own counter scope, so every one rendered as "1" |
 | The word budget stopped being a gate | Its section budgets were the wrong instrument: they cut content that carried figures. `BUDGET` and `TOTAL` are still counted and printed, and neither can fail `--strict` |
 | A `FILLER` check instead | Length is now controlled by cutting a paragraph that carries no figure, no source and no named thing, and by keeping a long one that carries data |
-| `run_state.py`, the checklist as data | A stage could be skipped and nobody would know. Each of the twelve stage ids now names the output that proves it happened, `design` wants all three of its files and `lint` wants `lint.json`, so a skipped stage is a gap rather than a claim |
+| `run_state.py`, the checklist as data | A stage could be skipped and nobody would know. Each of the twelve stage ids names the output that proves it happened, so a skipped stage is a gap rather than a claim. Which stage owes which file changed in the round above |
 | Three gates, stated once as a hard rule | `lint --strict`, `theme_check --strict` and `run_state check --strict` all have to exit 0 before a run ships |
 | A conditional reconcile challenger | A close call had no second reader. One runs when the call is refused or certainty is Low, and it endorses the call or quotes the line it disputes. It stays conditional because a peer on every node doubles the run |
 | `ANSWER_clean.md` is what gets handed over | Handing over the raw `ANSWER.md` was a real 5.0.0 defect: `<!--::meta-->` lines reached a founder in the file he was given. Every render now writes the same content with every tag and badge stripped |
@@ -942,6 +1100,8 @@ decides structure, who checks the page, and what a script can prove was done.
 | Quick mode renders | Dropping the page to satisfy the new theme gate was the wrong direction, so the gate is scoped to modes that run stage 7 and quick mode ships on the default theme |
 | Every script guards its arguments | Handing a run directory to `lint.py`, `theme_check.py` or `render.py` printed a traceback. Each now prints one line naming the mistake. A `--theme` that is passed and cannot be read exits 1 rather than shipping an unmeasured page |
 | The mandated italic subtitle is gone | An italic line was required under every heading. `render.py` still renders one where a writer wants it, and nothing asks for it any more |
+
+</details>
 
 <br>
 
@@ -953,20 +1113,22 @@ decides structure, who checks the page, and what a script can prove was done.
 | The page is paragraph after paragraph | Stage 7 was skipped, so almost nothing carries a tag | Run stage 7, then render again |
 | Raw `<!--::meta-->` text in the founder's file | `ANSWER.md` was handed over | Hand over `ANSWER_clean.md` from stage 10 |
 | A check-back fact never reached the answer | The revisable verdict rule was ignored | Rerun stage 6 with that fact at the top |
-| Numbers in the answer with no source | `claims_summary.md` was not read | Rerun stage 6 and require the badges |
+| Numbers in the answer with no source | `claims_brief.md` was not read | Rerun stage 6 and require the badges |
 | No Indian sources anywhere | The brief named no place | Put the city or state in the brief, rerun stage 2 |
 | Lint reports `FILLER` | A paragraph carries no figure, no source and no named thing | Cut those paragraphs, revise once |
-| The answer reads like slogans | Stage 9 was skipped, so nobody rejected a sentence | Run stage 9, apply `06_edit.md`, lint again |
+| The answer reads like slogans | Stage 9 was skipped, so nobody rejected a sentence | Run stage 9, apply both fix lists, lint again |
+| Lint reports `TAG_ORPHAN` | A block tag has nothing of its own to bind | Delete the tag, or give it back the content it lost |
+| A callout appears that nobody wrote | An editor cut emptied a tagged block and left its tag standing | Delete that block's tag comment, then render again |
 | `theme_check` exits 1 | The designer moved the accent past its floor on one tint | Move it lighter or darker until it passes, then rerender |
 | `run_state check` names a gap | That stage never wrote the file it owes | Run that stage, or say in chat that the run shipped without it |
-| A file says a source was blocked and stops | The ladder was ignored | Send it back once, naming the rungs |
+| A file says a source was blocked and stops | The ladder was ignored, or it stopped at the first rung | Send it back once, and require the rungs it tried up to the cap of three |
 | `render.py` reports zero tags | Stage 7 applied none | Run stage 7 again once, then ship as prose and say so |
 
 <br>
 
 ## 🎛️ Make it yours
 
-The engine is one file: [`skills/idea-research/SKILL.md`](skills/idea-research/SKILL.md), 530 lines of
+The engine is one file: [`skills/idea-research/SKILL.md`](skills/idea-research/SKILL.md), 552 lines of
 plain English, not code. The scripts beside it are the parts a script does better than a prompt.
 
 Change the default market from India, add a specialist for your domain, extend the never-write table,

@@ -45,7 +45,7 @@ ADVISORY = {"BUDGET", "TOTAL"}
 # Every check this script can emit, so --json names them all whether or not one fired.
 CHECKS = ("BANNED", "BUDGET", "CALLOUT_RUN", "CELL", "FILLER", "FRAGMENT", "HEADING",
           "HEADING_NUMBER", "HEDGE", "INTERNAL", "JARGON", "LONG", "PARA", "PROSE_WALL",
-          "QUOTE", "REPEAT", "TOTAL", "UNSOURCED")
+          "QUOTE", "REPEAT", "TAG_ORPHAN", "TOTAL", "UNSOURCED")
 
 # Composition limits. Two callouts in a row read as emphasis; three read as a wall of
 # boxes with no page between them. Three plain paragraphs read as prose; four read as an
@@ -114,6 +114,7 @@ step stop study submit suggest supply support suppose survive switch take talk t
 track trade train treat try turn understand use validate value verify visit wait walk want warn wash watch wear win
 travel govern carry apply argue audit badge bind cap collapse detect enforce feed inherit lint number obey rank
 render restate sample score search skip split strip tag weigh
+rate block overstate understate float stand hide sit read write draw round divide multiply
 renew disagree
 wish wonder work worry write book phone ring email text draft sketch map rank log chart plot budget cap trim pitch
 quote bill refund pause split merge batch queue file tag sort filter scan screen survey poll interview recruit hang
@@ -151,6 +152,18 @@ NUM_HEADING = re.compile(r"^#+\s*(\d{2})\s*[·.\-]")
 # instructions to the renderer, not prose, so they are stripped before every check.
 BLOCK_TAG = re.compile(r"<!--\s*::.*?-->")
 HTML_COMMENT = re.compile(r"<!--.*?-->")
+# TAG_ORPHAN reads a tag exactly the way render.py's read_blocks does, so these four
+# patterns are copies of render.py's TAG_RE, ANY_COMMENT_RE, its fence test and
+# HEADING_RE. A tag render.py will not see is a tag this check must not report.
+TAG_LINE = re.compile(r"^<!--::\s*([A-Za-z][\w-]*)\s*(?:\|\s*(.*?))?\s*-->\s*$")
+COMMENT_LINE = re.compile(r"^<!--.*-->\s*$")
+FENCE_LINE = re.compile(r"^\s*(```|~~~)")
+HEADING_LINE = re.compile(r"^#{1,6}\s+")
+# COMPONENTS.md says ::appendix is placed before an "##" heading and collapses that
+# section, and render.py binds it there on purpose. It is the one tag a heading does
+# not orphan. ::meta needs no exemption: COMPONENTS.md gives it its own "Key: value"
+# block above the H1, so the documented shape is a tag followed by its own content.
+HEADING_BINDING_TAGS = ("appendix",)
 # Fallback for older answers, whose action section sits in the middle of the file rather
 # than last. Imperatives and the founder's own budget are fine in these.
 ACTION_HEADING = re.compile(r"^(how to find out|how to test|do this first|what to do|ask \d+|the next \d+|track (these|the)|the way in)", re.I)
@@ -161,6 +174,11 @@ HEADING_TOPIC_OPENER = re.compile(r"^(who|what|why|how|where|when|which|whether|
 DATA_ROW = re.compile(r"^[^:]{1,70}:\s*[₹$\d]")
 FIGURE = re.compile(r"[₹$]\s?[\d,]+|\b\d+(\.\d+)?%")
 QUOTE_CHARS = re.compile(u"[\"\u201c\u201d]")
+# A URL, a bare domain, or a named store or journal the run cites by name.
+SOURCE_ON_LINE = re.compile(
+    r"https?://"
+    r"|\b[a-z0-9][a-z0-9-]*\.(?:com|in|org|net|io|co|health|gov|edu|app|dev)\b"
+    r"|\b(?:1mg|Play Store|App Store|Google Play|Flipkart|PubMed|Reddit|Quora)\b", re.I)
 SOURCEISH = re.compile(r"\b[a-z0-9_-]+\.(com|in|org|net|health|app|io|co|md)\b")
 # A block tag on its own line names the component under it: <!--::warn|Title-->.
 # The name runs to the "|" or to the closing "-->", so the trailing dashes of the
@@ -363,6 +381,64 @@ def _repeats(seen, add):
                 add(lb, "REPEAT", "sentence is near-identical to line %d: %s..." % (la, sa[:60]))
                 flagged.add(b)
 
+def tag_orphans(lines):
+    """Block tags with no block of their own, read the way render.py binds one.
+
+    render.py holds a tag pending until a block of content arrives, so a tag that
+    loses its content does not vanish: it lands on the next unrelated block. That
+    is how a deleted line turned a plain paragraph into a legal Caution callout,
+    and the tag census still counted the tag, so the zero-tags backstop passed.
+
+    Four shapes leave a tag with nothing of its own, each read off read_blocks:
+      1. another block tag comes next, which overwrites the pending tag
+      2. a heading comes next, which takes the tag and then renders without it,
+         except ::appendix, which render.py does bind to a heading on purpose
+      3. the file ends with the tag still pending
+      4. a code fence comes next, which render.py never binds a tag to, so the
+         tag falls past the fenced block onto whatever follows it
+
+    A blank line and a plain HTML comment do not break a binding, because
+    read_blocks keeps the tag pending across both. So a tag above a blank line and
+    then its paragraph, its table or its list is correct and is never reported.
+    """
+    found, fence = [], None
+    for idx, line in enumerate(lines):
+        hit = FENCE_LINE.match(line)
+        if fence is not None:
+            # Inside a fence every line is content, including a tag comment.
+            if hit: fence = None
+            continue
+        if hit:
+            fence = hit.group(1); continue
+        tag = TAG_LINE.match(line)
+        if not tag: continue
+        name = tag.group(1).lower()
+        j = idx + 1
+        while j < len(lines):
+            nxt = lines[j]
+            if not nxt.strip():
+                j += 1; continue
+            if COMMENT_LINE.match(nxt) and not TAG_LINE.match(nxt):
+                j += 1; continue   # render.py drops a plain comment, tag still pending
+            break
+        why = None
+        if j >= len(lines):
+            why = "the file ends before any block follows it"
+        elif TAG_LINE.match(lines[j]):
+            why = ("the next block tag, on line %d, replaces it before it binds anything"
+                   % (j + 1))
+        elif FENCE_LINE.match(lines[j]):
+            why = ("a code fence follows on line %d, and render.py leaves a fenced block "
+                   "untagged, so the tag lands on the block after it" % (j + 1))
+        elif HEADING_LINE.match(lines[j]) and name not in HEADING_BINDING_TAGS:
+            why = ("a heading follows on line %d, and render.py drops a ::%s tag that "
+                   "lands on a heading" % (j + 1, name))
+        if why:
+            found.append((idx + 1,
+                          "::%s has no block of its own: %s. Delete the tag, or give it "
+                          "back the content it lost" % (name, why)))
+    return found
+
 def lint(path):
     lines, problems = Path(path).read_text(encoding="utf-8").split("\n"), []
     # The UNSOURCED window reads neighbouring lines, so it reads them tag-free too:
@@ -372,6 +448,10 @@ def lint(path):
     # single line can tell you that: the reader has to have seen the appendices already.
     roles, last_part = section_roles(lines)
     def add(n, kind, msg):  problems.append((n, kind, msg))
+    # Its own pass, because it reads forward from a tag and the main loop reads one
+    # line at a time. A tag that binds nothing is a composition fault, not prose.
+    for orphan_line, orphan_msg in tag_orphans(lines):
+        add(orphan_line, "TAG_ORPHAN", orphan_msg)
     in_code, headings, action = False, [], False
     para, para_start, para_action, para_plain = [], 0, False, True
     # Block structure. `in_tag` is true while a block tag's own contiguous lines are being
@@ -552,7 +632,10 @@ def lint(path):
             continue
         # Only a sentence-length quote implies a person was quoted. "Not Available"
         # and a defined term in quotes are labels, and were 4 of 5 hits before.
-        if not action and not re.search(r"https?://", line):
+        # A bare domain is what rule 7 asks for, "name the source", so redcliffelabs.com
+        # on the line is a source even with no scheme. Demanding https:// flagged four
+        # correctly attributed quotations in one real answer.
+        if not action and not SOURCE_ON_LINE.search(line):
             # Odd segments of a split on quote marks are the quoted spans themselves.
             if any(len(q.split()) >= 5 for q in QUOTE_CHARS.split(line)[1::2]):
                 add(i, "QUOTE", "quotation marks with no source link - nobody was interviewed")

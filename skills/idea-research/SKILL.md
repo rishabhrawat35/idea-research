@@ -9,7 +9,7 @@ metadata:
 
 # Idea Research
 
-**Version 6.0.0** · keep this in step with `.claude-plugin/plugin.json`, the only version the desktop app shows. Bump both on every change: patch for wording, minor for a new rule or stage, major for a pipeline change.
+**Version 6.1.0** · keep this in step with `.claude-plugin/plugin.json`, the only version the desktop app shows. Bump both on every change: patch for wording, minor for a new rule or stage, major for a pipeline change.
 
 Check whether an idea is worth building. The market is India by default and money is in ₹. The reader is a founder with no money, no team and no network, reading on a phone at 11pm. The job is to find out what is
 true. Use it for "is this worth building", "should I build X", "is there a gap here", "would anyone fund this in India". Do not use it for a pitch deck, a financial model, a market-size lookup, or a company that
@@ -56,7 +56,7 @@ The system's own vocabulary never reaches the founder: no lane, no verdict tag, 
 
 # NEVER STOP AT A BLOCKED SOURCE
 
-"Reddit was blocked" is a researcher giving up. Work down this ladder and record which rungs you tried.
+"Reddit was blocked" is a researcher giving up. Work down this ladder, or skip to the rung most likely to work, and record which rungs you tried.
 
 1. Search for the content instead of the page. Threads get quoted in search results: try `site:reddit.com <topic>`.
 2. A different community on the same subject: forums, app store reviews, YouTube comments, Trustpilot.
@@ -64,7 +64,8 @@ The system's own vocabulary never reaches the founder: no lane, no verdict tag, 
 4. Someone who already did the reading: market reports, journalism, dissertations.
 5. The browser: `mcp__claude-in-chrome__*` or `mcp__remote-devices__Claude_Browser__*`, if this session has them.
 
-Only then write "could not find out", listing the rungs you tried. A file that stops at a block goes back once.
+Work at most three rungs on one question, then write "could not find out" naming the rungs tried. The ceiling covers one question and not
+the file, so work the ladder again for the next question. A file that stops at a block goes back once.
 
 # THE PIPELINE
 
@@ -72,20 +73,24 @@ Only then write "could not find out", listing the rungs you tried. A file that s
 |---|---|---|---|
 | 0 Brief | 0 | 2 min | Scope, and what would kill this |
 | 1 Scout | 1 | 4 min | Exists? Anyone paying? What changed? |
-| 2 Research | 3-6 | 9 min | Parallel diggers, one file each |
+| 2 Research | 3-6 | 16.8 min | Parallel diggers, one file each |
 | 3 Ledger | 0 | 10 sec | Three scripts build the evidence base |
-| 4 The pair | 2 | 5 min | Strongest case for, strongest case against |
-| 5 Reconcile | 2 | 4 min | Weigh both cases, do the arithmetic, challenge a close call |
-| 6 Write | 1 | 4 min | The answer |
-| 7 Design and structure | 2 | 5 min | One picks the theme and the components, a peer judges the rendered page |
+| 4 The pair | 2 | 7.0 min | Strongest case for, strongest case against |
+| 5 Reconcile | 2 | 11.1 min | Weigh both cases, do the arithmetic, challenge a close call |
+| 6 Write | 1 | 10.4 min | The answer |
+| 7 Design and structure | 1 | 12.5 min | One agent picks the theme and the components |
 | 8 Lint | 0 | 5 sec | A script checks the rules, strictly |
-| 9 Edit and revise | 2 | 4 min | One rejects the prose, one applies the fixes |
+| 9 Judge and revise | 3 | 10.1 min | A UX peer and an editor read the same page, one reviser applies both lists |
 | 10 Render | 0 | 1 min | A page you can share |
 
-Thirteen to sixteen agents on a typical run, about 38 minutes: Scout, the researchers, the pair, the reconciler with its
-challenger, the writer, the design agent, the UX peer, the editor and the reviser. The longest legal path is twenty, never
-more, which adds two specialists and two check-backs to that same list. The challenger sits inside the typical count,
-because the modes that spend the fewest researchers are the ones whose call tends to come back refused.
+A typical run spends thirteen to sixteen agents, every one named in the table above. The longest legal path is twenty, never more, adding two specialists
+and two check-backs. The challenger sits inside the typical count, because the modes that spend the fewest researchers are the ones whose call tends to come back refused.
+
+Stages 2, 4, 5, 6, 7 and 9 carry times from one measured run rather than an estimate, taken before this round's changes. Stage 0, Scout and the three
+script stages keep their earlier estimates, and the eleven rows together account for 75 of that run's 83 minutes.
+
+Rows 7 and 9 were measured before the UX peer moved to stage 9, so the 12.5 covers the design agent and that peer together. The 10.1 covers the editor
+and the reviser alone. Shortening the ledger, capping the ladder and judging in one message are expected to cut the total, which nobody has measured.
 
 **Three gates, a hard rule.** A run ships only once all three of these exit 0, and a run still failing one is reported in
 chat rather than shipped quietly.
@@ -93,9 +98,9 @@ chat rather than shipped quietly.
 - `python3 <skill folder>/tools/theme_check.py runs/<slug>/theme.json --strict`, in any mode that runs stage 7, which quick mode does not
 - `python3 <skill folder>/tools/run_state.py check runs/<slug>/ --strict`
 
-**Quick mode.** For quick, triage, or comparing more than one idea, run stages 0, 1, 2, 3, 6, 8 and 10: three researchers, no pair, no design stage, no editor, and a page on the default theme, so stage 10 runs without its `--theme` flag, about 20 minutes. Say which mode you are running. The writer then
-reads only the brief, `01_scout.md`, `_findings.md`, `lanes/`, `claims_summary.md` and `contradictions.md`, so Part 1 takes certainty of evidence from the sourced count and states no strength of view, Part 2 drops
-the section on where the two cases disagreed, and Part 3 takes its way in from the lanes.
+**Quick mode.** For quick, triage, or comparing more than one idea, run stages 0, 1, 2, 3, 6, 8 and 10: three researchers, no pair, no design stage, no judges, and a page on the default theme, so stage 10 runs without its `--theme` flag. Say which mode you are running. The writer then
+reads only the brief, `01_scout.md`, `_findings.md`, `lanes/`, `claims_brief.md` and `contradictions.md`, so Part 1 takes certainty of evidence from the sourced count and states no strength of view, Part 2 drops
+the section on where the two cases disagreed, and Part 3 takes its way in from the lanes. Appendix A still reads `claims_summary.md`.
 
 ## Stage 0. Brief
 
@@ -185,7 +190,7 @@ RULES
 - Every fact gets a source URL. With no source, write "no source, this is a guess".
 - Indian sources, Indian prices, ₹. Other countries when they answer what India cannot.
 - Report what argues against the idea. If you found none, you did not look.
-- Never stop at a blocked source. Work the ladder and record the rungs you tried.
+- Never stop at a blocked source. Work the ladder, at most three rungs on one question, and record the rungs you tried.
 - Don't recommend anything, find things out. Every rule in HOW TO WRITE applies.
 OUTPUT, written to {PATH} as "# {NAME}" then these H2 sections, in order:
 WHAT I FOUND (max 6 bullets, most important first) / THE NUMBERS (max 5 rows: what, how much, source) / WHAT
@@ -206,13 +211,13 @@ comparison found that asking an agent for a set number of items raised fabricate
 No agent writes the ledger by hand any more.
 
 ```bash
-python3 <skill folder>/tools/claims.py     runs/<slug>/            # claims.jsonl + claims_summary.md
+python3 <skill folder>/tools/claims.py     runs/<slug>/            # claims.jsonl + claims_summary.md + claims_brief.md
 python3 <skill folder>/tools/contradict.py runs/<slug>/            # contradictions.md
 python3 <skill folder>/tools/verify.py     runs/<slug>/ --sample 8  # verify_queue.md + verify.json
-python3 <skill folder>/tools/run_state.py  done runs/<slug>/ ledger   # the three files above now exist
+python3 <skill folder>/tools/run_state.py  done runs/<slug>/ ledger   # the four files it requires now exist
 ```
 
-- `claims.py` pulls every factual claim out of the research files and records whether a source sits behind it.
+- `claims.py` pulls every factual claim out of the research files, records whether a source sits behind it, and writes the brief later stages read.
 - `contradict.py` flags claims disagreeing on a number, date or negation. A quiet run means no numeric conflict.
 - `verify.py` samples cited claims into `verify_queue.md`, because published audits find only about half of cited
   statements fully supported by the source cited. The check-back agent at stage 5 owns that queue, works the rows
@@ -230,7 +235,7 @@ being more correct. Both files back ends the stage: `python3 <skill folder>/tool
 ```
 You have started companies with no money and got in through side doors. You have read every reason this fails,
 and you are here to find the way in, if there is one.
-READ every file in lanes/, the brief, 01_scout.md, _findings.md, claims_summary.md, contradictions.md. Max 5
+READ every file in lanes/, the brief, 01_scout.md, _findings.md, claims_brief.md, contradictions.md. Max 5
 searches. Every rule in HOW TO WRITE applies.
 FIRST, write ## MY ASSUMPTIONS: what you take as true before you argue, numbered lines, each marked sourced or
 assumed. Then work these four categories of way in, recording which you searched:
@@ -255,7 +260,7 @@ days) / THE ONE FACT THAT WOULD SETTLE THIS
 ```
 You are the sharpest reader this idea will ever meet, and your job is to state the strongest case that it
 fails, accurately enough that someone can check it. Not to win.
-READ every file in lanes/, the brief, 01_scout.md, _findings.md, claims_summary.md, contradictions.md. Max 5
+READ every file in lanes/, the brief, 01_scout.md, _findings.md, claims_brief.md, contradictions.md. Max 5
 searches. Every rule in HOW TO WRITE applies.
 FIRST, write ## MY ASSUMPTIONS: what you take as true before you argue, numbered lines, each marked sourced or
 assumed. Then, across the research:
@@ -280,7 +285,7 @@ One agent, no research. Where a number it needs is missing it writes "not found 
 
 ```
 You are reconciling two cases built independently. READ both, plus lanes/, the brief, 01_scout.md, _findings.md,
-claims_summary.md and contradictions.md. Zero searches. Every rule in HOW TO WRITE applies.
+claims_brief.md and contradictions.md. Zero searches. Every rule in HOW TO WRITE applies.
 1. WHERE THEY DISAGREE. For each disagreement, say whether the sides differ on a fact or on an assumption. A
    fact goes to a check-back. An assumption gets written down as one, and the answer says which way it was taken.
 2. WHAT BOTH ACCEPT. The claims neither case disputes. These carry the most weight.
@@ -303,7 +308,7 @@ Under HOW THIS LOOKS FROM EACH SIDE, write the seats the research actually cover
 source or saying it is our reading: the customer and her real alternative, the competitor and what it learned the
 hard way, the investor and the reason money would not come, the regulator, the operator who shipped with no money,
 the practitioner. Where the research does not carry a side, that seat is not written. Invent no voice, quote nobody.
-Under HOW MUCH OF THIS IS SOLID, one line from claims_summary.md: X of Y claims sourced, and what that means.
+Under HOW MUCH OF THIS IS SOLID, one line from claims_brief.md: X of Y claims sourced, and what that means.
 ```
 
 - **Check-backs.** If either case turns on a fact that can be looked up, such as a rule, a policy, a price or a
@@ -331,13 +336,14 @@ that paragraph, and length no longer fails a run. With every part and appendix i
 ```
 You are writing for a founder with no money, reading on a phone, tired.
 READ: 00_brief.md, 01_scout.md, _findings.md, everything in lanes/, 04a_case_for.md, 04b_case_against.md, 05_reconcile.md,
-05c_checkback.md and 05d_challenge.md if they exist, claims_summary.md, contradictions.md. YOU MAY NOT STATE ANY FACT
-THAT IS NOT IN THOSE FILES. Zero searches, nothing from memory. Where a section needs a number nobody researched,
-write "the research did not find this". Every rule in HOW TO WRITE applies.
+05c_checkback.md and 05d_challenge.md if they exist, claims_brief.md, contradictions.md, and claims_summary.md for the Appendix A
+rows alone. YOU MAY NOT STATE ANY FACT THAT IS NOT IN THOSE FILES. Zero searches, nothing from memory. Where a section needs a
+number nobody researched, write "the research did not find this". Every rule in HOW TO WRITE applies.
 OPEN by writing one line above the H1: which facts came back in 05c_checkback.md, whether the conclusion moved because of
 them, and which line the challenger disputed in 05d_challenge.md. Where neither file exists, say neither was needed.
 DO NOT TREAT THE RESEARCH AS RELIABLE BY DEFAULT. In one real run, 154 of 222 claims carried no source. Check
-claims_summary.md before leaning on a figure, and badge any unsourced number [[warn:Thin]] or [[bad:Not found]].
+claims_brief.md before leaning on a figure, and badge any unsourced number [[warn:Thin]] or [[bad:Not found]]. The brief
+lists only the shaky rows that carry a figure. A figure it leaves out is one that had a source, so badge only what the brief lists.
 Evidence comes before opinion, and the conclusion appears in exactly one place, Part 1. Parts 2 and 3 may not
 restate it. Carry the two fields from 05_reconcile.md into Part 1 unchanged, as separate sentences.
 BLOCK TAGS. Write each tag as an HTML comment on its own line, applying to the block that follows, as in
@@ -360,7 +366,9 @@ argues". Then findings only, no recommending, each one a <!--::finding--> block 
 whether people refused this, could not have done it until now, or never tried it; who has already tried and where they
 ended up; what this market pays for today in ₹; what the proxy measures found; where the two cases disagreed and what
 settles it; what breaks if the numbers are wrong. The problems the case against ranked go in one <!--::ranked--> block,
-worst first, one list item each, written "claim :: why it ranks there", because the order carries the argument. Use
+worst first, one list item each, written "claim :: why it ranks there", because the order carries the argument. The
+claim and the reason are separate sentences and each stays under 25 words, since the checker reads a joined item as one
+long sentence. Use
 <!--::note--> for context nobody would act on, <!--::quote--> only for a real quotation with its source,
 <!--::caution--> for a legal or safety line.
 THIRD PART, what to do. The cheapest version that could exist by Friday, from 04a_case_for.md, or one line saying no way
@@ -376,16 +384,22 @@ the next 90 days as a <!--::timeline-->, phases in order, one list item a row, w
 that means it worked". A number in the plan is a target you are setting, not a finding, so say that once here and do not
 badge it. If the answer is no, this part is what it would take to prove us wrong, not a plan.
 ## Appendix A. Sources and calculations for every figure
-From claims_summary.md unchanged, plus the sourced-against-guessed count.
+The sourced-against-guessed count, then one row per figure the answer actually cites: what it
+is, the value, the source, sourced or guess. Take those rows from the full claims_summary.md
+rather than the brief, and never paste the whole ledger. Pasting hundreds of rows once made an
+answer 112KB and failed 200 cell checks, so carry only the figures the reader met.
 ## Appendix B. Where two sources disagree
 From contradictions.md. If empty, say the script found no numeric conflict.
 ## Appendix C. What we could not find out
 Table: Question | Why it matters | Cheapest way to answer it. Name blocked sources and what was tried instead. One
 row for every action the editor could not stand up, saying what was proposed and what is missing behind it.
-## Appendix D. How this looks from each side, and both cases in full
-From 05_reconcile.md and the two case files, carried over whole, the ranked problems tagged <!--::ranked--> here too. Close
-the answer with a <!--::cards--> block pointing at the files behind it, one line each: the claim ledger, the contradiction
-check, the two cases.
+## Appendix D. How this looks from each side, and both cases
+The seats from 05_reconcile.md, then each case's own argument in its own words, and any line the
+challenger disputed where it lands. Summarise rather than paste: a file carried over whole brings
+its own numbered headings and section labels with it, which then fail the lint on a page nobody
+wrote them for. The ranked problems are tagged <!--::ranked--> here too. Close the answer with a
+<!--::cards--> block pointing at the files behind it, one line each: the claim ledger, the
+contradiction check, the two cases.
 RULES
 - If people have already refused this, write "don't build this" plainly and do not soften it.
 - If the evidence says people are paying and the constraint that blocked this has lifted, write "build this"
@@ -399,8 +413,8 @@ RULES
 
 ## Stage 7. Design and structure
 
-One agent decides how the page is built, reading the finished answer rather than guessing before it exists, and then a peer judges
-what it built. Neither may change a fact, a number or a sentence, because structure is the whole of this stage.
+One agent decides how the page is built, reading the finished answer rather than guessing before it exists. It may not change a fact, a number or a
+sentence, because structure is the whole of this stage. It works alone, because nobody can judge a page that has not been composed yet.
 
 ```
 You have designed reports people read on a phone at 11pm, and you decide structure from a finished answer.
@@ -414,22 +428,7 @@ READ runs/<slug>/ANSWER.md whole, and 00_brief.md. Zero searches. Every rule in 
 RETURN: the theme and the sentence behind it, how many blocks became components and how many stayed prose, and the ratios theme_check printed. Max 5 lines.
 ```
 
-```
-You are the same kind of designer, meeting this page cold, and you judge how it looks rather than what it says.
-FIRST render it and look at it. Run `python3 <skill folder>/render/render.py runs/<slug>/ANSWER.md --theme runs/<slug>/theme.json`, then open runs/<slug>/report.html and screenshot it at 1100px wide and at 400px wide.
-With no browser in this session, say so in your first line and judge report.html and the tag census instead. Every rule in HOW TO WRITE applies.
-Report against this checklist, quoting the block you mean: plain paragraphs stacked into a wall inside a part; an ordered list whose numbers are typed into the sentence rather than hanging beside it; the ninety days reading as prose instead of a phased plan;
-callouts running one after another; a table overflowing at 400px; an accent unreadable on its own tint; anything above the call that delays it; a caption repeating what its heading already said.
-You have not seen the research, so you know nothing. You may NOT invent a fact: no number, company, date, price or claim that is not already on the page, and you may not rewrite the answer's words.
-You return a fix list the way the editor does, and every entry is a tag move, a tag removal, a block split or a theme change.
-OUTPUT, written to runs/<slug>/07_ux.md as H2 sections: WHAT THE PAGE LOOKS LIKE (one line per screenshot) / FIXES (numbered, each as FIX / BLOCK: the heading or first six words / WHY: one sentence / DO: the tag or theme change) /
-WHAT IS RIGHT AND MUST NOT BE TOUCHED / I INVENTED NOTHING (one line, or which entry broke the rule).
-```
-
-The orchestrator applies that list to ANSWER.md and theme.json, tags and theme keys only. A fix may move the accent, so
-`python3 <skill folder>/tools/theme_check.py runs/<slug>/theme.json --strict` runs again here and has to exit 0 before the
-page is rendered once more. Then `python3 <skill folder>/tools/run_state.py done runs/<slug>/ design`, which wants all
-three of this stage's files, `theme.json`, `layout.md` and `07_ux.md`, so a UX peer that never ran shows up as a gap.
+Then `python3 <skill folder>/tools/run_state.py done runs/<slug>/ design`, which wants this stage's two files, `theme.json` and `layout.md`. The peer who judges the built page runs at stage 9, reading the same draft the editor reads.
 
 ## Stage 8. Lint
 
@@ -438,12 +437,25 @@ python3 <skill folder>/lint.py runs/<slug>/ANSWER.md --strict --json > runs/<slu
 python3 <skill folder>/tools/run_state.py done runs/<slug>/ lint
 ```
 
-The exit code is the gate, not the file. `lint.json` only puts the counts on disk so the stage cannot be recorded on trust and
-so stage 9 has something to paste; drop `--json` and the redirect to read the same run in prose. Standard library only, seconds
-to run. It still counts the visible words and prints them, because a founder may want to know, but length is controlled by the
-filler check now and not by a budget.
+The exit code is the gate, not the file. `lint.json` only puts the counts on disk so the stage cannot be recorded on trust and so stage 9
+has something to paste; drop `--json` and the redirect to read the same run in prose. Standard library only, seconds to run.
 
-## Stage 9. Edit, then revise once
+## Stage 9. Judge the page, judge the prose, then revise once
+
+The UX peer and the editor go out in ONE message, read the same `ANSWER.md`, and neither sees the other's output. One judges how the page looks
+and the other judges the words, and neither may change a fact. Then one reviser applies both lists and says which entry came from which.
+
+```
+You are the same kind of designer as the one at stage 7, meeting this page cold, and you judge how it looks rather than what it says.
+FIRST render it and look at it. Run `python3 <skill folder>/render/render.py runs/<slug>/ANSWER.md --theme runs/<slug>/theme.json`, then open runs/<slug>/report.html and screenshot it at 1100px wide and at 400px wide.
+With no browser in this session, say so in your first line and judge report.html and the tag census instead. Every rule in HOW TO WRITE applies.
+Report against this checklist, quoting the block you mean: plain paragraphs stacked into a wall inside a part; an ordered list whose numbers are typed into the sentence rather than hanging beside it; the ninety days reading as prose instead of a phased plan;
+callouts running one after another; a table overflowing at 400px; an accent unreadable on its own tint; anything above the call that delays it; a caption repeating what its heading already said.
+You have not seen the research, so you know nothing. You may NOT invent a fact: no number, company, date, price or claim that is not already on the page, and you may not rewrite the answer's words.
+Every entry you return is a tag move, a tag removal, a block split or a theme change, and never a change to a word.
+OUTPUT, written to runs/<slug>/07_ux.md as H2 sections: WHAT THE PAGE LOOKS LIKE (one line per screenshot) / FIXES (numbered, each as FIX / BLOCK: the heading or first six words / WHY: one sentence / DO: the tag or theme change) /
+WHAT IS RIGHT AND MUST NOT BE TOUCHED / I INVENTED NOTHING (one line, or which entry broke the rule).
+```
 
 ```
 You are an editor who has never seen this research. You are reading the answer cold.
@@ -468,21 +480,31 @@ should not be touched) / I INVENTED NOTHING (one line, or which entry broke the 
 ```
 
 ```
-Apply the fixes in 06_edit.md to ANSWER.md. Nothing else. Zero searches. Every rule in HOW TO WRITE applies.
+Apply the fixes in 06_edit.md and the UX entries in 07_ux.md to ANSWER.md, and any theme entry to theme.json. Nothing else.
+Zero searches. Every rule in HOW TO WRITE applies.
 - Apply FIX entries exactly as written, and CUT entries by deleting the line.
-- For NEEDS A FACT, look in the research files. If the fact is there, write the line and cite the source.
-- If it is not there, mark the line, do not delete it. A line proposing something to do keeps its words and moves
-  into Appendix C as its own row, saying what was proposed and what is missing behind it. A line stating a finding
-  keeps its place and carries [[bad:Not found]]. Deletion is only for a line asserting a figure as fact with no
-  source behind it anywhere. Never fill a gap from memory.
-- Add no number, name, date, price or claim that is not in ANSWER.md or a research file.
-- Change nothing you were not asked to change. If a fix would remove the answer itself, skip it and say which.
-Then say in one line: fixes applied, lines moved to Appendix C, fixes skipped, and why.
+- Apply each UX entry as a tag move, a tag removal, a block split or a theme key, and change no word of the prose for one.
+- Where the two lists touch the same line, the editor owns the words and the UX peer owns the tags, so apply both. Where they truly
+  conflict, the answer's meaning wins, and you say which entry you skipped.
+- Where the editor deletes a line or moves it into Appendix C, that ruling wins. Where that line was a tagged block's only content,
+  delete the block's tag comment too. A tag left standing binds the next paragraph and renders it as a callout it is not.
+- A UX entry is dropped only when its whole block is gone, and it survives a cut that leaves the block standing.
+- The UX peer names a block by its heading or first six words, which an editor FIX can rewrite. Match its anchors against the text
+  the peer read, and apply the editor's words first, then place the tags on the blocks you matched.
+- For NEEDS A FACT, look in 00_brief.md, 01_scout.md, _findings.md, lanes/, 04a_case_for.md, 04b_case_against.md, 05_reconcile.md, 05c_checkback.md
+  and 05d_challenge.md if they exist, claims_brief.md, contradictions.md and claims_summary.md. If the fact is there, write the line and cite the source.
+- If it is not there, mark the line, do not delete it. A line proposing something to do keeps its words and moves into Appendix C as its
+  own row, saying what was proposed and what is missing behind it. A line stating a finding keeps its place and carries [[bad:Not found]].
+  Deletion is only for a line asserting a figure as fact with no source behind it anywhere. Never fill a gap from memory.
+- Add no number, name, date, price or claim that is not in ANSWER.md or a research file. If a fix would remove the answer itself, skip it and say which.
+Then say in one line: fixes applied and which list each came from, lines moved to Appendix C, fixes skipped, and why.
 ```
 
-Run the lint again, one round only, because two agents editing each other never converge. If `--strict` still fails, say so in
-chat rather than shipping quietly. A missing script means running its checks by reading, and saying so. Then
-`python3 <skill folder>/tools/run_state.py done runs/<slug>/ edit`.
+A UX fix may move the accent, so `python3 <skill folder>/tools/theme_check.py runs/<slug>/theme.json --strict` runs again here and has to exit 0. Then run
+`python3 <skill folder>/lint.py runs/<slug>/ANSWER.md --strict --json > runs/<slug>/lint.json` again, one round only, because two agents editing each other
+never converge. A missing script means running its checks by reading, and saying so.
+
+Close with `python3 <skill folder>/tools/run_state.py done runs/<slug>/ edit`, which wants `06_edit.md` and `07_ux.md`, so a judge that never ran shows up as a gap.
 
 ## Stage 10. Render and hand over
 
@@ -507,8 +529,9 @@ runs/<slug>/
 01_scout.md  exists, pays, what changed   04b_case_against.md  the case that it fails
 _findings.md running list, corrections    05_reconcile.md      both cases weighed, plus the two rating fields
 lanes/       one file per researcher      05c_checkback.md     looked-up facts, and which were decisive
-claims.jsonl every claim as data, read by the two scripts below   05d_challenge.md  the challenger on a close call
-claims_summary.md  sourced against guessed        contradictions.md  where two sources disagree
+claims.jsonl every claim as data, read by contradict.py and verify.py   05d_challenge.md  the challenger on a close call
+claims_summary.md  the full ledger, read by Appendix A    contradictions.md  where two sources disagree
+claims_brief.md    the counts, then the shaky rows that carry a figure, read by stages 4 to 6
 verify_queue.md and verify.json  the check-back's rows   06_edit.md  what the editor sent back
 theme.json   the theme, accent and type          layout.md    which block becomes which component
 07_ux.md     the UX peer's fix list              lint.json    the strict lint's counts, written by the gate
@@ -522,9 +545,8 @@ report.html  the page                            _state.json and _state.md  whic
 |---|---|---|
 | Every idea comes back as no | Scout never asked what changed, or 4a was skipped | Rerun 4a, check Scout answered question 4 |
 | The page is paragraph after paragraph | Stage 7 was skipped, so almost nothing carries a tag | Run stage 7, then render again |
-| Raw `<!--::meta-->` text in the founder's file | `ANSWER.md` was handed over | Hand over `ANSWER_clean.md` from stage 10 |
 | A check-back fact never reached the answer | The revisable verdict rule was ignored | Rerun stage 6 with that fact at the top |
-| Numbers in the answer with no source | claims_summary.md was not read | Rerun stage 6 and require the badges |
+| Numbers in the answer with no source | claims_brief.md was not read | Rerun stage 6 and require the badges |
 | No Indian sources anywhere | The brief named no place | Put the city or state in the brief, rerun stage 2 |
 | Lint reports FILLER | A paragraph carries no figure, no source and no named thing | Cut those paragraphs, revise once |
-| The answer reads like slogans | Stage 9 was skipped, so nobody rejected a sentence | Run stage 9, apply `06_edit.md`, lint again |
+| The answer reads like slogans | Stage 9 was skipped, so nobody rejected a sentence | Run stage 9, apply both fix lists, lint again |

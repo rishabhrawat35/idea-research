@@ -32,7 +32,10 @@ STAGES = [
     {"id": "brief",     "label": "brief",              "outputs": ["00_brief.md"]},
     {"id": "scout",     "label": "scout",              "outputs": ["01_scout.md"]},
     {"id": "research",  "label": "research lanes",      "outputs": ["_findings.md", "lanes/"]},
+    # Four later prompts read claims_brief.md rather than the full ledger, so a
+    # run that never wrote the brief must fail here instead of failing later.
     {"id": "ledger",    "label": "claim ledger",       "outputs": ["claims_summary.md",
+                                                                   "claims_brief.md",
                                                                    "contradictions.md",
                                                                    "verify_queue.md"]},
     {"id": "pair",      "label": "for and against",    "outputs": ["04a_case_for.md",
@@ -40,12 +43,17 @@ STAGES = [
     {"id": "reconcile", "label": "reconcile",          "outputs": ["05_reconcile.md"]},
     {"id": "checkback", "label": "checkback",          "outputs": ["05c_checkback.md"],
      "optional": True},
-    {"id": "design",    "label": "design and structure", "outputs": ["theme.json",
-                                                                   "layout.md",
-                                                                   "07_ux.md"]},
+    # write comes before design, because SKILL.md writes the answer at stage 6 and
+    # designs the page at stage 7. The order is read by check's "First gap" line, so
+    # an inverted list sends an orchestrator to the design agent with no ANSWER.md.
     {"id": "write",     "label": "write answer",       "outputs": ["ANSWER.md"]},
+    {"id": "design",    "label": "design and structure", "outputs": ["theme.json",
+                                                                   "layout.md"]},
     {"id": "lint",      "label": "lint gate",          "outputs": ["lint.json"]},
-    {"id": "edit",      "label": "edit pass",          "outputs": ["06_edit.md"]},
+    # The UX peer now runs beside the editor rather than inside the design
+    # stage, so 07_ux.md is proof that the edit stage ran both judges.
+    {"id": "edit",      "label": "edit pass",          "outputs": ["06_edit.md",
+                                                                   "07_ux.md"]},
     {"id": "render",    "label": "render",             "outputs": ["report.html",
                                                                    "ANSWER_clean.md"]},
 ]
@@ -125,6 +133,10 @@ def load_state(run_dir):
 def save_state(run_dir, state):
     js, md = state_paths(run_dir)
     state["updated"] = now_iso()
+    # stage_order is a copy of the pipeline, so it is rewritten on every save. Written
+    # once at init, a run started before the write and design stages were put back in
+    # pipeline order would have carried the old order for the rest of its life.
+    state["stage_order"] = STAGE_IDS
     with open(js, "w") as fh:
         json.dump(state, fh, indent=2, sort_keys=True)
         fh.write("\n")

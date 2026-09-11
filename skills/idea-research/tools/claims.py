@@ -8,8 +8,11 @@ the files this pipeline generates itself. Nothing is hardcoded, so a renamed
 or added stage file is audited without editing this script, and the stage
 files of older runs still audit exactly as before.
 
-Writes claims.jsonl (one claim per line) and claims_summary.md into the run
-directory. This replaces the analyst writing the evidence ledger by hand.
+Writes three files into the run directory. claims.jsonl holds one claim per
+line, claims_summary.md holds every row, and claims_brief.md holds the counts
+and one compact line per shaky row that carries a figure. This replaces the
+analyst writing the evidence ledger by hand. A stage that only needs to know
+which figures are shaky reads the brief, so it does not re-read the ledger.
 
 Exit 0 on success, 1 on a real failure, 2 on bad usage. Standard library only.
 """
@@ -25,8 +28,8 @@ USAGE = "usage: python3 claims.py runs/<slug>/"
 # as a table row, and ANSWER.md would re-import the ones already counted from
 # the files it was written from. Compared lowercase, so ANSWER.md and answer.md
 # are both recognised.
-GENERATED_NAMES = ("claims_summary.md", "contradictions.md", "verify_queue.md",
-                   "ANSWER.md", "ANSWER_clean.md", "_state.md",
+GENERATED_NAMES = ("claims_summary.md", "claims_brief.md", "contradictions.md",
+                   "verify_queue.md", "ANSWER.md", "ANSWER_clean.md", "_state.md",
                    "layout.md", "07_ux.md", "06_edit.md")
 GENERATED = {name.lower() for name in GENERATED_NAMES}
 
@@ -183,19 +186,52 @@ def collect(run_dir):
     return paths, claims
 
 
-def write_summary(run_dir, paths, claims):
+# The full ledger's table. The brief uses a shorter one-line shape instead.
+# A five-column row spends more words on separators than on the claim, and a
+# reader who only wants the figure gains nothing from those separators.
+TABLE_HEAD = ["| File | Line | Figure | Status | Claim |", "|---|---|---|---|---|"]
+
+# The statuses the brief keeps. A sourced row carries its own URL, so a stage
+# checking which figures are shaky has no reason to read it.
+SHAKY = ("unsourced", "guess")
+
+# The brief cuts each claim to this many words. Twelve is enough to recognise
+# the sentence, and the file and line number lead to the rest of it.
+BRIEF_CLAIM_WORDS = 12
+
+# Ceilings on the padding that lines the brief's columns up in a terminal. The
+# widths are measured from the rows actually written and then capped, so one
+# very long figure cannot push every claim halfway across the screen. Markdown
+# collapses the runs of spaces, which costs the alignment there and nothing else.
+FIGURE_CAP = 14
+LOCATION_CAP = 28
+STATUS_WIDTH = 9
+
+
+def count_statuses(claims):
     counts = {"sourced": 0, "guess": 0, "unsourced": 0}
     for c in claims:
         counts[c["status"]] += 1
+    return counts
 
-    rows = ["| File | Line | Figure | Status | Claim |", "|---|---|---|---|---|"]
+
+def table_row(c):
+    """One ledger row. Long claim text is cut, because the file and line
+    number are enough to find the original."""
+    text = c["text"].replace("|", "/")
+    if len(text) > 110:
+        text = text[:107] + "..."
+    return "| %s | %d | %s | %s | %s |" % (
+        c["file"], c["line"], c["figure"].replace("|", "/") or "-",
+        c["status"], text)
+
+
+def write_summary(run_dir, paths, claims):
+    counts = count_statuses(claims)
+
+    rows = list(TABLE_HEAD)
     for c in claims:
-        text = c["text"].replace("|", "/")
-        if len(text) > 110:
-            text = text[:107] + "..."
-        rows.append("| %s | %d | %s | %s | %s |" % (
-            c["file"], c["line"], c["figure"].replace("|", "/") or "-",
-            c["status"], text))
+        rows.append(table_row(c))
 
     out = ["# Claim ledger", "",
            "Built by tools/claims.py from %d file(s). One row per claim line."
@@ -207,6 +243,69 @@ def write_summary(run_dir, paths, claims):
             ""]
     (run_dir / "claims_summary.md").write_text("\n".join(out), encoding="utf-8")
     return counts
+
+
+def location(c):
+    """Where the claim is, as one word a reader can paste into a search."""
+    return "%s:%d" % (c["file"], c["line"])
+
+
+def brief_line(c, figure_pad, location_pad):
+    """One brief line: the figure, its status, where it is, and the opening of
+    the claim. A guess is marked in capitals, so the figures a researcher
+    already doubted stand out from the ones that simply carry no URL."""
+    words = c["text"].split()
+    text = " ".join(words[:BRIEF_CLAIM_WORDS])
+    if len(words) > BRIEF_CLAIM_WORDS:
+        text += "..."
+    status = "GUESS" if c["status"] == "guess" else c["status"]
+    return "- %s %s %s %s" % (
+        c["figure"].ljust(figure_pad), status.ljust(STATUS_WIDTH),
+        location(c).ljust(location_pad), text)
+
+
+def write_brief(run_dir, paths, claims, counts):
+    """The short ledger: the counts, then the shaky rows that carry a figure.
+
+    Five stages need to know which figures are shaky, and none of them needs
+    the sourced rows to find that out. A shaky row with no figure in it is not
+    a number a writer can check. Such a row stays in the full ledger and out
+    of here. The closing line names that ledger and its row count.
+    """
+    shaky = [c for c in claims if c["status"] in SHAKY]
+    figured = [c for c in shaky if c["figure"]]
+
+    out = ["# Claim ledger, shaky figures only", "",
+           "Built by tools/claims.py. It lists every figure that carries no "
+           "source, one line each.", "",
+           "- claims: %d" % len(claims),
+           "- sourced: %d" % counts["sourced"],
+           "- guess: %d" % counts["guess"],
+           "- unsourced: %d" % counts["unsourced"],
+           "- shaky rows carrying a figure: %d" % len(figured),
+           "- files audited: %d" % len(paths),
+           ""]
+
+    if figured:
+        out += ["Each line below is the figure, then its status, then the file "
+                "and line, then the first %d words of the claim. A figure "
+                "marked GUESS was flagged by a researcher; the rest are only "
+                "unsourced." % BRIEF_CLAIM_WORDS,
+                ""]
+        figure_pad = min(max(len(c["figure"]) for c in figured), FIGURE_CAP)
+        location_pad = min(max(len(location(c)) for c in figured), LOCATION_CAP)
+        for c in figured:
+            out.append(brief_line(c, figure_pad, location_pad))
+    else:
+        out.append("No unsourced or guessed claim in this run carries a figure.")
+
+    out += ["",
+            "The full ledger is claims_summary.md, with all %d rows: the "
+            "sourced ones, and the %d shaky rows that carry no figure."
+            % (len(claims), len(shaky) - len(figured)),
+            ""]
+    (run_dir / "claims_brief.md").write_text("\n".join(out), encoding="utf-8")
+    return len(shaky), len(figured)
 
 
 def main(argv):
@@ -235,9 +334,12 @@ def main(argv):
             fh.write(json.dumps(c, ensure_ascii=False) + "\n")
 
     counts = write_summary(run_dir, paths, claims)
+    shaky, figured = write_brief(run_dir, paths, claims, counts)
     print("%d claims from %d files -> %s" % (len(claims), len(paths), run_dir / "claims.jsonl"))
     print("sourced %d, guess %d, unsourced %d"
           % (counts["sourced"], counts["guess"], counts["unsourced"]))
+    print("%d shaky row(s), %d of them carrying a figure -> %s"
+          % (shaky, figured, run_dir / "claims_brief.md"))
     return 0
 
 
