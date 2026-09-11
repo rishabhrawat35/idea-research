@@ -1,6 +1,6 @@
 ---
 name: idea-research
-description: 'Checks whether a startup idea is worth building. Research agents dig, one agent builds the strongest case that it works, another builds the strongest case that it fails, a synthesis step reconciles them, and an editor rejects any sentence a tired founder could not read. Asks what changed recently, so genuinely new ideas are not rejected for having no track record, and measures demand by proxy when the thing does not exist yet. India-first, plain English. Use when someone wants an idea checked, a market or competitor scan, gaps and threats, community or investor sentiment, or a go/no-go on a new bet.'
+description: "Checks whether a startup idea is worth building. Research agents dig, one argues the case for and another the case against, a reconciler weighs them, a design agent chooses the page's structure and palette from the idea's own domain, and a UX peer and an editor judge the finished page together. India-first, plain English. Use for an idea check, a market or competitor scan, gaps and threats, community or investor sentiment, or a go/no-go on a new bet."
 license: MIT
 metadata:
   tags: "Startup Research, Market Analysis, Multi-Agent, India, Idea Validation"
