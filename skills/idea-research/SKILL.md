@@ -9,9 +9,9 @@ metadata:
 
 # Idea Research
 
-**Version 6.2.0** · keep this in step with `.claude-plugin/plugin.json`, the only version the desktop app shows. Bump both on every change: patch for wording, minor for a new rule or stage, major for a pipeline change.
+**Version 6.3.0** · keep this in step with `.claude-plugin/plugin.json`, the only version the desktop app shows. Bump both on every change: patch for wording, minor for a new rule or stage, major for a pipeline change.
 
-Check whether an idea is worth building. The market is India by default and money is in ₹. The reader is a founder with no money, no team and no network, reading on a phone at 11pm. The job is to find out what is
+Find the right thing to build in the founder's direction. The market is India by default and money is in ₹. The reader is a founder with no money, no team and no network, smart but new to this field, reading on a phone at 11pm. Assume they do not know the industry's words, so define each on first use. The job is not to grade the exact sentence the founder gave. It is to find what is
 true. Use it for "is this worth building", "should I build X", "is there a gap here", "would anyone fund this in India". Do not use it for a pitch deck, a financial model, a market-size lookup, or a company that
 already exists.
 
@@ -22,6 +22,8 @@ conclusion, where a no and a yes need equal evidence and the same voice.
 
 Getting it backwards produces two mistakes: yes to a corpse, because most ideas nobody pays for are ideas people already refused, and no to something new, because nobody paid
 to summon a car from a phone before GPS phones existed. Telling a refused idea from an untried one is most of the work.
+
+A constraint the founder names — solo, this exact customer, this price — is a variable to test, not a fact to obey. If relaxing one turns a weak idea into a strong one, say so plainly: a weak solo play can be a strong brand play. This never softens the judge. Search wider for the play, then weigh it just as hard, and let a direction with no viable play still come back as no.
 
 # HOW TO WRITE
 
@@ -74,6 +76,8 @@ The system's own vocabulary never reaches the founder: no lane, no verdict tag, 
 
 Rule 13 and those nine checks come from blader/humanizer v3.0.0, MIT. Its patterns come from Wikipedia's "Signs of AI writing", maintained by
 WikiProject AI Cleanup, and from reviews of AI-generated text on Wikipedia and elsewhere.
+
+14. **Define it the first time, and teach with names.** A word a smart outsider would not know gets a plain definition in the same sentence it first appears: "a Meta-ads agency (a firm that runs Facebook and Instagram ads for others)". Write who-pays-whom as a short numbered chain, never a compressed clause, because "you sell only the markup" is not a sentence a newcomer can parse. Name the real companies, prices and case studies that led to the call, since a named example teaches where a verdict only asserts. When that detail would crowd the page, push it into a collapsed appendix rather than cutting it.
 
 # NEVER STOP AT A BLOCKED SOURCE
 
@@ -132,6 +136,8 @@ Orchestrator only. Ask at most three questions, and only if the idea cannot be s
 WHAT IT IS: one sentence a stranger understands   WHO HAS THE PROBLEM: a specific person, not a segment
 WHAT THEY DO NOW: including "nothing"             WHAT THEY PAY NOW: ₹, and how often
 WHERE: India / specific cities / tier             WHAT THE FOUNDER HAS: skills, access, money, or none
+THE DIRECTION: the goal the founder is reaching for, which stays fixed
+THE STATED CONSTRAINTS: specifics the founder named (solo vs team, this customer, this price, this exact use case), each a variable to test and not a given; mark which are load-bearing and which, if relaxed, could unlock the idea
 WHAT THE FOUNDER BELIEVES: the assumption they are betting on
 WHY NOW: what changed to make this possible today (a blank one is itself a finding)
 NOT RESEARCHING: what nobody should chase        WHAT WOULD KILL THIS: the findings that would end it
@@ -147,7 +153,7 @@ One agent, twelve searches, 500 words, writes `01_scout.md`, returns five lines.
 1. **Does this exist in India?** Every real one, with price in ₹, users, money raised and current status.
 2. **Does anyone pay for the exact thing, or only for something next to it,** such as a product or a person's time?
 3. **What did the closest company choose to do that looks expensive or awkward?** That choice is a wall they hit.
-4. **What changed?** What became possible in the last 24 to 36 months: a cost falling, a new platform, a rule change, a behaviour shift. Does this make money elsewhere, at what price and size? Are there dead
+4. **What changed, and where is it heading?** What became possible in the last 24 to 36 months: a cost falling, a new platform, a rule change, a behaviour shift. Where is this heading over the next 24 months, is the trend toward it or away, and name the signal. Does this make money elsewhere, at what price and size, and is anyone running an adjacent version that clearly works, here or abroad? Are there dead
    bodies here, what killed them, and has that changed? A company that died of a constraint that has gone is evidence for it.
 
 Scout's findings are provisional and go into later prompts marked as such. A researcher who finds a Scout claim wrong says so, and the correction goes into `_findings.md`. A wrong fact injected as known is worse
@@ -172,7 +178,7 @@ All researchers go out in one message, one file each, five lines back. Each gets
 | R2 | Knows which companies here died and why | Who is doing it, who failed, what killed them, whether that cause still applies | Inc42, Entrackr, MCA filings, post-mortems | Company history, not customers |
 | R3 | Reads the forums | Where these people talk in their own words, and who already hacks a workaround | Reddit, Quora, WhatsApp and Telegram groups, one-star reviews | Behaviour, not market size |
 | R4 | Grew a product on ₹0 | The first 100 users named, how to reach them free, what blocks trust | Community lists, creator audiences, local directories | Distribution, not pricing |
-| R5 | Tracks Indian seed deals | Who funds this, what makes them decline, whether it works unfunded | Deal databases, investor blogs, public decks | Funding, not operations |
+| R5 | Tracks Indian seed deals and who is already winning nearby | Who funds this, what makes them decline, whether it works unfunded, and who already runs a working adjacent version here or abroad that could be copied | Deal databases, investor blogs, public decks, foreign analogues | Funding and adjacent winners, not operations |
 
 ### The proxy researcher
 
@@ -259,11 +265,12 @@ and you are here to find the way in, if there is one.
 READ every file in lanes/, the brief, 01_scout.md, _findings.md, claims_brief.md, contradictions.md. Max 5
 searches. Every rule in HOW TO WRITE applies.
 FIRST, write ## MY ASSUMPTIONS: what you take as true before you argue, numbered lines, each marked sourced or
-assumed. Then work these four categories of way in, recording which you searched:
+assumed. Then work these five categories of way in, recording which you searched:
 1. THE BORROWED VERSION. Whose audience, licence, stock, shelf or trust can be rented instead of built? Name them.
 2. THE NARROWER VERSION. Which single customer type would pay today, even at 2% of the vision? Name it.
 3. THE DIFFERENT-PAYER VERSION. Same insight, someone else pays. Name who benefits enough to pay.
 4. THE COMPETITOR'S CONSTRAINT. What can they not do without breaking a payroll, a licence or a brand promise?
+5. THE COPY. Who already runs this and makes money, in India or abroad, that could simply be copied — the model, the pricing, the motion? Name them, say what you would copy, and whether India has no such player yet.
 A forced count makes agents invent things, so there is no target number of options. Say which categories came back
 empty, in the words "nothing found in this category". That is a real finding and costs no search, so spend the
 budget on the categories producing names.
@@ -271,8 +278,8 @@ budget on the categories producing names.
 - Real tactics with names: post in this group, call this company, list on this site.
 - No pep talk, and no vote on whether the idea is good. You propose things to try.
 OUTPUT, written to runs/<slug>/04a_case_for.md as H2 sections:
-MY ASSUMPTIONS / THE STRONGEST CASE THAT THIS WORKS / CATEGORIES SEARCHED (all four, each with what was found or
-"nothing found") / THE WAY IN, IF THERE IS ONE / WHAT THE INCUMBENT CANNOT DO / THINGS TO TRY (each with ₹ and
+MY ASSUMPTIONS / THE STRONGEST CASE THAT THIS WORKS / CATEGORIES SEARCHED (all five, each with what was found or
+"nothing found") / THE CANDIDATE PLAYS (two to four, each named with a real company or market, one line on what to copy or build, one line stress-testing it) / THE WAY IN, IF THERE IS ONE / WHAT THE INCUMBENT CANNOT DO / THINGS TO TRY (each with ₹ and
 days) / THE ONE FACT THAT WOULD SETTLE THIS
 ```
 
@@ -318,12 +325,17 @@ claims_brief.md and contradictions.md. Zero searches. Every rule in HOW TO WRITE
    cost +60% and value -35%, base as researched, aggressive at cost -25% and value +25%. Say which column to plan
    against, and that a ratio above 5:1 usually means the value is inflated. If either figure is missing or
    unsourced, skip the table and write one sentence: which figure is missing, and what having it would change.
+5. RELAX A CONSTRAINT. Take the stated constraints from the brief. For each load-bearing one, say whether relaxing
+   it — solo to brand, this customer to a nearby one, this price to another — turns the call positive, and name the
+   constraint that flips it. Do not force a yes: if no relaxation helps, say so plainly. Then name the sharpest play
+   found across both cases and 04a's candidate plays, and two or three runners-up, each with the real company or
+   market behind it, and a white space and a copy of an existing winner are both valid plays.
 Then rate the evidence in two separate fields, never blended into one sentence. CERTAINTY OF EVIDENCE: High (very
 confident the truth is close to what the research found), Moderate (likely close, could be substantially
 different), Low (confidence limited), Very low (very little confidence). STRENGTH OF VIEW: "we recommend" for a
 strong view, "we suggest" for a weak one. A strong view resting on Low certainty is allowed, if it is visible.
 OUTPUT, written to runs/<slug>/05_reconcile.md as H2 sections: WHERE THEY DISAGREE / WHAT BOTH ACCEPT / REFUSED,
-NOT YET POSSIBLE, OR UNTRIED / IF THE NUMBERS ARE WRONG / CERTAINTY OF EVIDENCE / STRENGTH OF VIEW / HOW THIS LOOKS
+NOT YET POSSIBLE, OR UNTRIED / IF THE NUMBERS ARE WRONG / THE SHARPEST PLAY AND RUNNERS-UP (named, with the constraint relaxed if any) / THE HURDLES THAT REMAIN (worst first, each one real and checkable) / CERTAINTY OF EVIDENCE / STRENGTH OF VIEW / HOW THIS LOOKS
 FROM EACH SIDE / HOW MUCH OF THIS IS SOLID.
 Under HOW THIS LOOKS FROM EACH SIDE, write the seats the research actually covered, two sentences each, naming a
 source or saying it is our reading: the customer and her real alternative, the competitor and what it learned the
@@ -342,6 +354,9 @@ Under HOW MUCH OF THIS IS SOLID, one line from claims_brief.md: X of Y claims so
   Same persona as the reconciler, zero searches, and every rule in HOW TO WRITE applies. It reads both case files, `05c_checkback.md`
   if it exists, and `05_reconcile.md`, then writes `05d_challenge.md`: either one line endorsing the call and the reason it holds,
   or the exact line it disputes, quoted, with what the research supports instead. It may not rewrite `05_reconcile.md`.
+  Before it endorses or disputes, it asks four things, each answered in one line with the file behind it: was the framing
+  too narrow, did the call anchor on one stated constraint the reconciler should have relaxed, was a stronger adjacent
+  play missed, and is the "no" backed by evidence or just the default.
 - **The revisable verdict, a hard rule.** If `05c_checkback.md` carries a fact that either case named as decisive,
   the writer must re-open the conclusion and write it again from the new fact. A run once found the deciding fact in
   a check-back and shipped the opposite conclusion, because the answer was already drafted.
@@ -379,9 +394,11 @@ so no heading may be assembled out of these words. Nothing identifies a part exc
 below and stop at the first ## Appendix heading. One real answer headed them "THE ANSWER IS NOT THIS VERSION", "THE
 EVIDENCE SHOWS NOBODY WAS EVER ASKED TO BUY THIS" and "THE WAY IN IS A LAB-PAID BOOKING", which is the shape to aim at
 and not wording to reuse.
-FIRST PART, the call. The call in one sentence under <!--::verdict-->: yes, no, or "not this version, but this one
-might". Then the number that drives it, then certainty of evidence and strength of view as two separate sentences, then
-the one condition that would change the answer, then the one thing to do today. Nothing else belongs here.
+FIRST PART, the call. The call in one sentence under <!--::verdict-->: yes, "not this exact version, the sharper play is
+X" naming the real play, or no. A no is about the specific bet and never the direction. When 05_reconcile named a sharper
+play or a constraint worth relaxing, the call leads with that play, not with a refusal. Then the number that drives it, then
+certainty of evidence and strength of view as two separate sentences, then the one condition that would change the answer,
+then the one thing to do today. Nothing else belongs here.
 SECOND PART, the evidence. Open with a <!--::stat--> block: the numbers this answer rests on, each as "value :: what it
 argues". Then findings only, no recommending, each one a <!--::finding--> block under a heading that states its finding:
 whether people refused this, could not have done it until now, or never tried it; who has already tried and where they
@@ -392,13 +409,16 @@ claim and the reason are separate sentences and each stays under 25 words, since
 long sentence. Use
 <!--::note--> for context nobody would act on, <!--::quote--> only for a real quotation with its source,
 <!--::caution--> for a legal or safety line.
-THIRD PART, what to do. The cheapest version that could exist by Friday, from 04a_case_for.md, or one line saying no way
-in was found and what would have to change. Where 04a found more than one way in, score them in a <!--::compare-->
-table: option, cost in ₹, days, what it proves, the row to run first in bold. Then, in this order, the one belief
-everything rests on under <!--::important-->, a cost or limit that will bite under <!--::warn-->, a test under ₹20,000
+THIRD PART, what to do. Lead with the plays: score the sharpest play and its runners-up from 05_reconcile in a
+<!--::compare--> table — option, who already does it (the real company or market), cost in ₹, days, what it proves, the
+row to run first in bold — and say in one line which plays combine (and) and which are alternatives (or). A white space and
+a copy of an existing winner are both valid rows. Then the cheapest version of the chosen play that could exist by Friday,
+from 04a_case_for.md, or one line saying no play was found and what would have to change. Then, in this order, the one belief
+everything rests on under <!--::important-->, a cost or limit that will bite under <!--::warn-->, the hurdles that remain as a
+<!--::ranked--> block worst first, a test under ₹20,000
 and two weeks as <!--::steps-->, numbered, with cost and time, the last step naming the number that means yes and the
 number that means no, and a shortcut that saves real money under <!--::tip-->. Keep that order: no more than two
-callouts may stand next to each other, and the steps are what break this run of three. Then the people to approach as
+callouts may stand next to each other, and the hurdles block breaks that run. Then the people to approach as
 an <!--::asks--> block, one list item each, written "name :: why them :: question | question", each named specifically
 enough to find this week; never ask "would you pay for X", ask what they pay for now and what they last abandoned. Then
 the next 90 days as a <!--::timeline-->, phases in order, one list item a row, written "phase :: the item :: the number
@@ -418,7 +438,10 @@ row for every action the editor could not stand up, saying what was proposed and
 The seats from 05_reconcile.md, then each case's own argument in its own words, and any line the
 challenger disputed where it lands. Summarise rather than paste: a file carried over whole brings
 its own numbered headings and section labels with it, which then fail the lint on a page nobody
-wrote them for. The ranked problems are tagged <!--::ranked--> here too. Close the answer with a
+wrote them for. The ranked problems are tagged <!--::ranked--> here too.
+## Appendix E. Companies and case studies, and what each taught
+The named players behind the call, drawn from the research files: who they are, what they did, what it cost or earned, and the one thing each taught that moved the answer. Here the reader learns from real brands instead of being told an idea is a flop. This appendix opens closed like the others, so the depth sits a click away and never crowds the page. Name India and foreign analogues both.
+Close the answer with a
 <!--::cards--> block pointing at the files behind it, one line each: the claim ledger, the
 contradiction check, the two cases.
 RULES
@@ -482,7 +505,7 @@ WHAT IS RIGHT AND MUST NOT BE TOUCHED / I INVENTED NOTHING (one line, or which e
 You are an editor who has never seen this research. You are reading the answer cold.
 READ: runs/<slug>/ANSWER.md and the lint output below. Nothing else. Zero searches. You judge it against every
 rule in HOW TO WRITE.
-1. Does every claim explain itself to someone who read nothing else?
+1. Does every claim explain itself to someone who read nothing else, and is every industry term a smart outsider would not know defined in the same sentence it first appears (rule 14)? Name each undefined term to fix.
 2. Does any number imply more than it proves?
 3. Is anything a conclusion pretending to be a fact?
 4. Would a person say this out loud, or does it read like a deck?
@@ -573,3 +596,6 @@ report.html  the page                            _state.json and _state.md  whic
 | No Indian sources anywhere | The brief named no place | Put the city or state in the brief, rerun stage 2 |
 | Lint reports FILLER | A paragraph carries no figure, no source and no named thing | Cut those paragraphs, revise once |
 | The answer reads like slogans | Stage 9 was skipped, so nobody rejected a sentence | Run stage 9, apply both fix lists, lint again |
+| A term goes undefined and the reader cannot parse it | Rule 14 was skipped | Rerun stage 6 or 9 requiring define-on-first-use |
+| The idea is condemned on one stated constraint | Stage 5 never tested relaxing it | Rerun stage 5 with the RELAX A CONSTRAINT step, then stage 6 |
+| One option is offered where several exist | 4a's candidate plays were not surfaced | Rerun stage 6 and require the compare plays table |
