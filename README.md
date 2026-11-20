@@ -5,7 +5,7 @@
 **Two agents argue the same research to opposite conclusions, a reconciler weighs them, eight scripts build the evidence ledger and gate the run, and you get one page to send on.**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg?style=flat-square)](LICENSE)
-[![Version 6.3.0](https://img.shields.io/badge/version-6.3.0-8A63D2?style=flat-square)](skills/idea-research/SKILL.md)
+[![Version 6.3.1](https://img.shields.io/badge/version-6.3.1-8A63D2?style=flat-square)](skills/idea-research/SKILL.md)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-8A63D2?style=flat-square)](https://code.claude.com/docs/en/skills)
 [![Python 3, nothing to install](https://img.shields.io/badge/python%203-nothing%20to%20install-58a6ff?style=flat-square)](#prerequisites)
 

@@ -9,7 +9,7 @@ metadata:
 
 # Idea Research
 
-**Version 6.3.0** · keep this in step with `.claude-plugin/plugin.json`, the only version the desktop app shows. Bump both on every change: patch for wording, minor for a new rule or stage, major for a pipeline change.
+**Version 6.3.1** · keep this in step with `.claude-plugin/plugin.json`, the only version the desktop app shows. Bump both on every change: patch for wording, minor for a new rule or stage, major for a pipeline change.
 
 Find the right thing to build in the founder's direction. The market is India by default and money is in ₹. The reader is a founder with no money, no team and no network, smart but new to this field, reading on a phone at 11pm. Assume they do not know the industry's words, so define each on first use. The job is not to grade the exact sentence the founder gave. It is to find what is
 true. Use it for "is this worth building", "should I build X", "is there a gap here", "would anyone fund this in India". Do not use it for a pitch deck, a financial model, a market-size lookup, or a company that
@@ -77,7 +77,7 @@ The system's own vocabulary never reaches the founder: no lane, no verdict tag, 
 Rule 13 and those nine checks come from blader/humanizer v3.0.0, MIT. Its patterns come from Wikipedia's "Signs of AI writing", maintained by
 WikiProject AI Cleanup, and from reviews of AI-generated text on Wikipedia and elsewhere.
 
-14. **Define it the first time, and teach with names.** A word a smart outsider would not know gets a plain definition in the same sentence it first appears: "a Meta-ads agency (a firm that runs Facebook and Instagram ads for others)". Write who-pays-whom as a short numbered chain, never a compressed clause, because "you sell only the markup" is not a sentence a newcomer can parse. Name the real companies, prices and case studies that led to the call, since a named example teaches where a verdict only asserts. When that detail would crowd the page, push it into a collapsed appendix rather than cutting it.
+14. **Define it the first time, and teach with names.** A word a smart outsider would not know gets a plain definition in the same sentence it first appears: "a Meta-ads agency (a firm that runs Facebook and Instagram ads for others)". Write who-pays-whom as a short numbered chain, never a compressed clause, because "you sell only the markup" is not a sentence a newcomer can parse. Name the real companies, prices and case studies that led to the call, since a named example teaches where a verdict only asserts. When that detail would crowd the page, push it into a collapsed appendix rather than cutting it. Keep a one-line call or headline plain, and place a term's definition in the sentence beside it, not inside it.
 
 # NEVER STOP AT A BLOCKED SOURCE
 
@@ -394,11 +394,14 @@ so no heading may be assembled out of these words. Nothing identifies a part exc
 below and stop at the first ## Appendix heading. One real answer headed them "THE ANSWER IS NOT THIS VERSION", "THE
 EVIDENCE SHOWS NOBODY WAS EVER ASKED TO BUY THIS" and "THE WAY IN IS A LAB-PAID BOOKING", which is the shape to aim at
 and not wording to reuse.
-FIRST PART, the call. The call in one sentence under <!--::verdict-->: yes, "not this exact version, the sharper play is
-X" naming the real play, or no. A no is about the specific bet and never the direction. When 05_reconcile named a sharper
-play or a constraint worth relaxing, the call leads with that play, not with a refusal. Then the number that drives it, then
-certainty of evidence and strength of view as two separate sentences, then the one condition that would change the answer,
-then the one thing to do today. Nothing else belongs here.
+FIRST PART, the call. Under <!--::verdict-->, the call in at most three sentences: the recommendation (yes, "not this exact
+version, the sharper play is X" naming the real play, or no), the one number — or, when the driver is an absence, the one
+signal — that drives it, and the one condition that would change it. A no is about the specific bet and never the direction,
+and leads with the sharper play 05_reconcile named when there is one. Keep the call sentence itself plain, and define each
+new term in the sentence beside the call, inside Part 1, never crammed into the call and never deferred to a later part.
+Then, once each and in short prose under the part heading, the certainty of evidence and the strength of view as two separate
+sentences, and the one thing to do today. State the strength of view once, not twice. The Part-1 heading states the call in
+the answer's own words and does not re-argue it. Nothing else belongs in this part.
 SECOND PART, the evidence. Open with a <!--::stat--> block: the numbers this answer rests on, each as "value :: what it
 argues". Then findings only, no recommending, each one a <!--::finding--> block under a heading that states its finding:
 whether people refused this, could not have done it until now, or never tried it; who has already tried and where they
@@ -415,7 +418,8 @@ row to run first in bold — and say in one line which plays combine (and) and w
 a copy of an existing winner are both valid rows. Then the cheapest version of the chosen play that could exist by Friday,
 from 04a_case_for.md, or one line saying no play was found and what would have to change. Then, in this order, the one belief
 everything rests on under <!--::important-->, a cost or limit that will bite under <!--::warn-->, the hurdles that remain as a
-<!--::ranked--> block worst first, a test under ₹20,000
+<!--::ranked--> block worst first, opened with one line that these are the same market risks now facing the play you should
+run, so restate Part 2's risks honestly here rather than inventing new ones, a test under ₹20,000
 and two weeks as <!--::steps-->, numbered, with cost and time, the last step naming the number that means yes and the
 number that means no, and a shortcut that saves real money under <!--::tip-->. Keep that order: no more than two
 callouts may stand next to each other, and the hurdles block breaks that run. Then the people to approach as
@@ -438,7 +442,7 @@ row for every action the editor could not stand up, saying what was proposed and
 The seats from 05_reconcile.md, then each case's own argument in its own words, and any line the
 challenger disputed where it lands. Summarise rather than paste: a file carried over whole brings
 its own numbered headings and section labels with it, which then fail the lint on a page nobody
-wrote them for. The ranked problems are tagged <!--::ranked--> here too.
+wrote them for. Do not re-list the ranked problems here, because Part 2 already carries them and a third copy is the duplication the REPEAT check only masks; point to them in one line, or give the case against's own one-line summary.
 ## Appendix E. Companies and case studies, and what each taught
 The named players behind the call, drawn from the research files: who they are, what they did, what it cost or earned, and the one thing each taught that moved the answer. Here the reader learns from real brands instead of being told an idea is a flop. This appendix opens closed like the others, so the depth sits a click away and never crowds the page. Name India and foreign analogues both.
 Close the answer with a
@@ -599,3 +603,4 @@ report.html  the page                            _state.json and _state.md  whic
 | A term goes undefined and the reader cannot parse it | Rule 14 was skipped | Rerun stage 6 or 9 requiring define-on-first-use |
 | The idea is condemned on one stated constraint | Stage 5 never tested relaxing it | Rerun stage 5 with the RELAX A CONSTRAINT step, then stage 6 |
 | One option is offered where several exist | 4a's candidate plays were not surfaced | Rerun stage 6 and require the compare plays table |
+| Part 1 is a wall that repeats the call | The verdict carried definitions, re-argument and a duplicate strength line | Rerun stage 6: tight verdict, definitions beside the call, each field stated once |
