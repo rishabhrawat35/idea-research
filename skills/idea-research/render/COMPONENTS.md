@@ -9,7 +9,7 @@ what earns a component.
 | Tag | Content type it holds |
 |---|---|
 | `::meta` | Date, status, owner. One block, `Key: value` per line. Put it above the H1's answer, first in the file. |
-| `::verdict` | The single recommendation. One block, largest thing on the page. Use once. |
+| `::verdict` | The single recommendation — the call only, a few sentences, defining its terms beside them. Use once. |
 | `::stat` | Numbers that each carry an argument. Three or four per block, `value :: label`. |
 | `::finding` | One claim plus its evidence, cost strip and next step. Repeat for a numbered run. |
 | `::note` | Neutral context the reader needs but would not act on. |
