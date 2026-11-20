@@ -1,17 +1,17 @@
 # idea-research
 
-*Checks whether a startup idea is worth building, and leaves the evidence behind the answer on disk.*
+*Finds the right thing to build in your direction, and leaves the evidence behind the answer on disk.*
 
 **Two agents argue the same research to opposite conclusions, a reconciler weighs them, eight scripts build the evidence ledger and gate the run, and you get one page to send on.**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg?style=flat-square)](LICENSE)
-[![Version 6.1.1](https://img.shields.io/badge/version-6.1.1-8A63D2?style=flat-square)](skills/idea-research/SKILL.md)
+[![Version 6.3.0](https://img.shields.io/badge/version-6.3.0-8A63D2?style=flat-square)](skills/idea-research/SKILL.md)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-8A63D2?style=flat-square)](https://code.claude.com/docs/en/skills)
 [![Python 3, nothing to install](https://img.shields.io/badge/python%203-nothing%20to%20install-58a6ff?style=flat-square)](#prerequisites)
 
 ## What it does, and the first command
 
-You describe an idea in one sentence. Research agents find who sells it in India, who pays, who died trying and what changed recently. One agent argues that it works, another that it fails, from the same files, and a reconciler picks the call: build this, do not build this, or not this version.
+You describe a direction in one sentence. Research agents find who sells it in India, who pays, who died trying, who is winning in an adjacent version, and where the trend is heading. One agent argues that it works, another that it fails, from the same files, and a reconciler names the sharpest play in your direction and its runners-up — build this, copy this proven player, start in this white space, or not this exact version — and tests whether a constraint you named (solo, this customer, this price) should be relaxed instead of obeyed.
 
 ```bash
 claude plugin marketplace add rishabhrawat35/idea-research

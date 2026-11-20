@@ -1,7 +1,7 @@
 {
   "name": "idea-research",
-  "version": "6.2.0",
-  "description": "Checks whether a startup idea is worth building. Two agents argue the case for and against from the same research, a reconciler weighs them, a design agent chooses the page's structure and palette from the idea's own domain, and three scripts gate the run. India-first, plain English, state on disk.",
+  "version": "6.3.0",
+  "description": "Finds the right thing to build in a founder's direction. Research agents dig, two agents argue the case for and against from the same research, a reconciler names the sharpest play and its runners-up (a white space, or a copy of a proven player) and tests whether a stated constraint should be relaxed, scripts gate the run, and the answer defines its own terms. India-first, plain English, state on disk.",
   "author": {
     "name": "Rishabh Rawat",
     "url": "https://github.com/rishabhrawat35"

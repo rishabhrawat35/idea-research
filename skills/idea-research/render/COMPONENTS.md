@@ -186,4 +186,4 @@ Headings state the finding, not the topic, and read correctly with the section
 covered. Three or more related data points become a table row. Nothing over 25
 words. Three sentences per paragraph. One fact has one owning section; later
 mentions cross-reference it. Appendices open closed, so nothing a reader needs in
-order to act may sit inside one.
+order to act may sit inside one. Define each industry term a smart outsider would not know in the sentence it first appears, and write who-pays-whom as a numbered chain. Name the real companies behind the call, and push heavy case studies into a collapsed appendix.
